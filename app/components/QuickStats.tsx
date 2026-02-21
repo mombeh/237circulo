@@ -35,7 +35,7 @@ export function QuickStats() {
                 <Icon className="w-8 h-8 text-green-primary" strokeWidth={1.5} />
               </div>
 
-              <div className="font-syne text-3xl font-bold text-[var(--foreground)] mb-2">
+              <div className="font-syne text-3xl font-bold text-[var(--card)] mb-2">
                 {stat.value}
               </div>
 
