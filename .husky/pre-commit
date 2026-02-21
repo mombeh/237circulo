@@ -1,2 +1,1 @@
-# Skip linting for now - ESLint 9 compatibility issue with eslint-config-next
-# npx lint-staged
+npx lint-staged
