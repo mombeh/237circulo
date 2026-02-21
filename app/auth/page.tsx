@@ -20,6 +20,16 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 relative">
+      <Link
+        href="/"
+        className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm text-[var(--text-dim)] hover:text-green-primary transition"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+          <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L4.414 9H18a1 1 0 110 2H4.414l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" />
+        </svg>
+        <span>Back</span>
+        <span className="ml-1 inline-block w-2 h-2 rounded-full bg-green-primary animate-pulse" aria-hidden />
+      </Link>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-green-primary/10 dark:bg-green-primary/5 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="w-full max-w-md z-10">
