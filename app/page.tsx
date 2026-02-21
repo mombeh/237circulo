@@ -1,27 +1,27 @@
-import Link from 'next/link';
+'use client'
 
-export default function LeaderboardPage() {
+import { Header } from './components/Header'
+import { Hero } from './components/Hero'
+import { QuickStats } from './components/QuickStats'
+import { Features } from './components/Features'
+import { SmartRecycling } from './components/SmartRecycling'
+import { HowItWorks } from './components/HowItWorks'
+import { ImpactCTA } from './components/ImpactCTA'
+import { Footer } from './components/Footer'
+
+export default function LandingPage() {
   return (
-    <main className="max-w-6xl mx-auto p-6 lg:p-12 relative z-10">
-      <header className="flex justify-between items-center mb-12">
-        {/* Left Side: Brand/Title */}
-        <div>
-          <span className="text-green-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-            <div className="w-5 h-[2px] bg-green-primary" /> Monthly Rankings
-          </span>
-          <h1 className="font-syne text-4xl font-extrabold mt-4">Neighborhoods in Action</h1>
-        </div>
-
-        {/* Right Side: Auth Link */}
-        <Link
-          href="/auth"
-          className="px-6 py-2 rounded-full border border-[var(--border)] font-bold text-sm hover:bg-green-primary hover:text-white transition-all shadow-sm"
-        >
-          Sign In
-        </Link>
-      </header>
-
-      {/* ... rest of your leaderboard code ... */}
+    <main className="min-h-screen bg-[var(--background)]">
+      <Header />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Hero />
+        <QuickStats />
+      </div>
+      <Features />
+      <SmartRecycling />
+      <HowItWorks />
+      <ImpactCTA />
+      <Footer />
     </main>
-  );
+  )
 }
