@@ -11,7 +11,7 @@ export function SmartRecycling() {
   ]
 
   return (
-    <section className="bg-[var(--card)] border-t border-[var(--border)] py-16 sm:py-24 lg:py-32 mt-20">
+    <section className="bg-[var(--color-card)] border-t border-[var(--color-border)] py-16 sm:py-24 lg:py-32 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left: Image */}
@@ -30,11 +30,11 @@ export function SmartRecycling() {
 
           {/* Right: Content */}
           <div>
-            <h2 className="font-syne text-4xl sm:text-5xl font-extrabold mb-6 text-[var(--foreground)]">
+            <h2 className="font-syne text-4xl sm:text-5xl font-extrabold mb-6 text-[var(--color-foreground)]">
               Smart Recycling for Smart Cities
             </h2>
 
-            <p className="text-black text-lg mb-8 leading-relaxed">
+            <p className="text-[var(--color-foreground)] text-lg mb-8 leading-relaxed">
               Our platform connects households with certified collectors. Simply snap a photo, let our AI classify it, and schedule a pickup.
             </p>
 
@@ -45,12 +45,12 @@ export function SmartRecycling() {
                   <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-primary/20 flex items-center justify-center mt-1">
                     <div className="w-2.5 h-2.5 rounded-full bg-green-primary" />
                   </div>
-                  <span className="text-[var(--foreground)] font-medium">{feature}</span>
+                  <span className="text-[var(--color-foreground)] font-medium">{feature}</span>
                 </li>
               ))}
             </ul>
 
-            <button className="px-8 py-4 rounded-full bg-green-primary text-white font-bold hover:bg-green-600 transition-all shadow-lg shadow-green-500/30 text-black">
+            <button className="px-8 py-4 rounded-full bg-green-primary text-white font-bold hover:bg-green-600 transition-all shadow-lg shadow-green-500/30">
               View with details
             </button>
           </div>

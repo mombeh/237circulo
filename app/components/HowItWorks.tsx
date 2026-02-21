@@ -25,13 +25,13 @@ export function HowItWorks() {
   ]
 
   return (
-    <section className="py-16 sm:py-24 lg:py-32 bg-[var(--card)] border-t border-[var(--border)]">
+    <section className="py-16 sm:py-24 lg:py-32 bg-[var(--color-card)] border-t border-[var(--color-border)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="font-syne text-4xl sm:text-5xl font-extrabold text-black mb-4">
+          <h2 className="font-syne text-4xl sm:text-5xl font-extrabold text-[var(--color-foreground)] mb-4">
             How It Works
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--color-text-dim)] max-w-2xl mx-auto">
             Get started in 4 simple steps and start making a difference today.
           </p>
         </div>
@@ -53,8 +53,8 @@ export function HowItWorks() {
                 </div>
               </div>
 
-              <h3 className="font-syne text-xl font-bold text-black mb-3 pt-8">{step.title}</h3>
-              <p className="text-gray-600 leading-relaxed">{step.description}</p>
+              <h3 className="font-syne text-xl font-bold text-[var(--color-foreground)] mb-3 pt-8">{step.title}</h3>
+              <p className="text-[var(--color-text-dim)] leading-relaxed">{step.description}</p>
             </div>
           ))}
         </div>

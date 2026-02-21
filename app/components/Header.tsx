@@ -2,28 +2,14 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { Leaf } from 'lucide-react'
 
 /* ✅ Move this OUTSIDE Header */
 function NavLinks() {
   return (
     <>
-      <Link href="#" className="text-sm font-medium text-gray-600 hover:text-green-primary transition">
+      <Link href="/dashboard" className="text-sm font-medium text-[var(--color-text-dim)] hover:text-green-primary transition">
         Dashboard
-      </Link>
-      <Link href="#" className="text-sm font-medium text-gray-600 hover:text-green-primary transition">
-        Marketplace
-      </Link>
-      <Link href="#" className="text-sm font-medium text-gray-600 hover:text-green-primary transition">
-        Impact
-      </Link>
-      <Link href="#" className="text-sm font-medium text-gray-600 hover:text-green-primary transition">
-        Leaderboard
-      </Link>
-      <Link href="#" className="text-sm font-medium text-gray-600 hover:text-green-primary transition">
-        ListWaste
-      </Link>
-      <Link href="#" className="text-sm font-medium text-gray-600 hover:text-green-primary transition">
-        Chat
       </Link>
     </>
   )
@@ -33,11 +19,17 @@ export function Header() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="border-b border-[var(--border)] sticky top-0 bg-[var(--background)] z-40">
+    <header className="border-b border-[var(--color-border)] sticky top-0 bg-[var(--color-background)] z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="font-syne text-black text-xl font-extrabold tracking-tighter flex items-center gap-1">
-          <span className="text-green-primary">237</span>CIRCULO<span className="text-green-primary">AI</span>
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-600">
+            <Leaf className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-[var(--color-foreground)]">237Circulo</h1>
+            <p className="text-xs text-[var(--color-text-dim)]">Waste AI</p>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
@@ -51,7 +43,7 @@ export function Header() {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={open ? 'Close menu' : 'Open menu'}
-            className="md:hidden p-2 rounded-md text-gray-700 hover:bg-[var(--card)] hover:text-green-primary transition"
+            className="md:hidden p-2 rounded-md text-[var(--color-text-dim)] hover:bg-[var(--color-card)] hover:text-green-primary transition"
           >
             {open ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,7 +68,7 @@ export function Header() {
 
       {/* Mobile Navigation */}
       {open && (
-        <div className="md:hidden bg-[var(--card)] border-t border-[var(--border)]">
+        <div className="md:hidden bg-[var(--color-card)] border-t border-[var(--color-border)]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex flex-col gap-4">
               <NavLinks />
