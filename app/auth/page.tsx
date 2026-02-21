@@ -125,7 +125,7 @@ export default function AuthPage() {
               </form>
               <p className="mt-4 text-center text-sm text-[var(--color-text-dim)]">
                 <span>Don't have an account? </span>
-                <Link href="/signup" className="font-bold text-green-primary hover:underline">
+                <Link href="/auth/signup" className="font-bold text-green-primary hover:underline">
                   Sign up
                 </Link>
               </p>

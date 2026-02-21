@@ -23,7 +23,7 @@ export function Hero() {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/signup"
+            href="/auth/signup"
             className="px-8 py-4 rounded-full bg-green-primary text-white font-bold hover:bg-green-600 transition-all shadow-lg shadow-green-500/30"
           >
             Get Started Free →

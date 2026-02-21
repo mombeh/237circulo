@@ -58,7 +58,7 @@ export function Header() {
 
           {/* Sign Up (desktop only) */}
           <Link
-            href="/signup"
+            href="/auth/signup"
             className="hidden sm:inline-flex px-6 py-2 rounded-full border border-green-primary text-green-primary font-bold text-sm hover:bg-green-50 transition-all"
           >
             Sign Up
@@ -81,7 +81,7 @@ export function Header() {
             <div className="flex flex-col gap-4">
               <NavLinks />
               <Link
-                href="/signup"
+                href="/auth/signup"
                 className="mt-2 inline-block px-4 py-3 rounded-lg border border-green-primary text-green-primary font-bold text-center"
               >
                 Sign Up
