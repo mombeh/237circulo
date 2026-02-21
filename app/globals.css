@@ -1,26 +1,45 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Brand colors */
+  --color-green-primary: #22c55e;
+
+  /* Layout Variables */
+  --background: #fcfdfc;
+  --foreground: #0b1612;
+  --card: #ffffff;
+  --border: #e2eadd;
+  --text-dim: #5c7a69;
+
+  /* Input text color variable */
+  --input-text: #000000;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+/* Dark mode overrides must be outside @theme */
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-border: var(--border);
+    --color-text-dim: var(--text-dim);
+    --color-input-text: var(--input-text);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-background: #0b1612;
+      --color-foreground: #e2ede8;
+      --color-card: #111f18;
+      --color-border: #1f3a2b;
+      --color-text-dim: #7d9e8a;
+      /* Keeping input text black even in dark mode for high contrast if that is your preference */
+      --color-input-text: #000000;
+    }
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
 }
