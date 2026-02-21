@@ -1,4 +1,7 @@
+import tseslint from 'typescript-eslint';
+
 export default [
+  ...tseslint.configs.recommended,
   {
     files: ['**/*.{js,ts,tsx}'],
     languageOptions: {
@@ -9,10 +12,6 @@ export default [
         node: true,
         es2021: true,
       },
-    },
-    rules: {
-      'no-unused-vars': 'warn',
-      'no-console': 'off',
     },
   },
 ];
