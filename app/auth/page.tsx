@@ -12,7 +12,6 @@ export default function AuthPage() {
         e.preventDefault();
         setLoading(true);
 
-        // Simulate API call to send magic link
         setTimeout(() => {
             setLoading(false);
             setIsSent(true);
@@ -21,13 +20,12 @@ export default function AuthPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-6 relative">
-            {/* Decorative Glow - Adapts to theme */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-green-primary/10 dark:bg-green-primary/5 blur-[100px] rounded-full pointer-events-none" />
 
             <div className="w-full max-w-md z-10">
                 <div className="text-center mb-10">
                     <Link href="/" className="font-syne text-2xl font-extrabold tracking-tighter">
-                        CIRCULO<span className="text-green-primary">AI</span>
+                        <span className="text-green-primary">237</span>CIRCULO<span className="text-green-primary">AI</span>
                     </Link>
                 </div>
 
