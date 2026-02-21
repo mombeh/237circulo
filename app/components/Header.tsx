@@ -56,6 +56,14 @@ export function Header() {
             )}
           </button>
 
+          {/* Sign Up (desktop only) */}
+          <Link
+            href="/signup"
+            className="hidden sm:inline-flex px-6 py-2 rounded-full border border-green-primary text-green-primary font-bold text-sm hover:bg-green-50 transition-all"
+          >
+            Sign Up
+          </Link>
+
           {/* Sign In */}
           <Link
             href="/auth"
@@ -72,6 +80,12 @@ export function Header() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex flex-col gap-4">
               <NavLinks />
+              <Link
+                href="/signup"
+                className="mt-2 inline-block px-4 py-3 rounded-lg border border-green-primary text-green-primary font-bold text-center"
+              >
+                Sign Up
+              </Link>
               <Link
                 href="/auth"
                 className="mt-2 inline-block px-4 py-3 rounded-lg bg-green-primary text-white font-bold text-center"

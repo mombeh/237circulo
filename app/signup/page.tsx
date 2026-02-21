@@ -3,15 +3,17 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-export default function AuthPage() {
+export default function SignUpPage() {
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [isSent, setIsSent] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
+    // simulate network request
     setTimeout(() => {
       setLoading(false)
       setIsSent(true)
@@ -47,13 +49,31 @@ export default function AuthPage() {
           {!isSent ? (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <h1 className="font-syne text-2xl text-gray-700 font-bold mb-2">
-                Welcome back
+                Create your account
               </h1>
               <p className="text-[var(--text-dim)] text-sm mb-8">
-                Enter your email to receive a secure login link.
+                Enter your information to get started.
               </p>
 
-              <form onSubmit={handleLogin} className="space-y-6">
+              <form onSubmit={handleSignup} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-dim)]">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Jane Doe"
+                    className="w-full bg-[var(--background)] border border-[var(--border)] 
+             rounded-xl px-4 py-3 outline-none 
+             text-black placeholder:text-gray-400
+             focus:ring-2 focus:ring-green-primary/20 
+             focus:border-green-primary transition-all"
+                  />
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-dim)]">
                     Email Address
@@ -77,26 +97,20 @@ export default function AuthPage() {
                   disabled={loading}
                   className="w-full bg-green-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-50"
                 >
-                  {loading ? 'Sending...' : 'Send Link'}
+                  {loading ? 'Creating...' : 'Sign Up'}
                 </button>
               </form>
-              <p className="mt-4 text-center text-sm text-[var(--text-dim)]">
-                <span>Don't have an account? </span>
-                <Link href="/signup" className="font-bold text-green-primary hover:underline">
-                  Sign up
-                </Link>
-              </p>
             </div>
           ) : (
             <div className="text-center py-4 animate-in zoom-in duration-300">
               <div className="w-16 h-16 bg-green-500/10 text-green-primary rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-                📬
+                🎉
               </div>
               <h2 className="font-syne text-2xl font-bold mb-2">
                 Check your inbox
               </h2>
               <p className="text-[var(--text-dim)] text-sm mb-8">
-                We sent a login link to <br />
+                We sent a confirmation to <br />
                 <span className="text-[var(--foreground)] font-medium">
                   {email}
                 </span>
@@ -105,7 +119,7 @@ export default function AuthPage() {
                 onClick={() => setIsSent(false)}
                 className="text-xs font-bold uppercase tracking-widest text-green-primary hover:underline"
               >
-                Try a different email
+                Use a different email
               </button>
             </div>
           )}
