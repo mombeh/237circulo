@@ -44,13 +44,13 @@ export function Features() {
   ]
 
   return (
-    <section className="py-16 sm:py-24 lg:py-32 bg-[var(--background)]">
+    <section className="py-16 sm:py-24 lg:py-32 bg-[var(--color-background)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="font-syne text-4xl sm:text-5xl font-extrabold text-black mb-4">
+          <h2 className="font-syne text-4xl sm:text-5xl font-extrabold text-[var(--color-foreground)] mb-4">
             Everything You Need
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--color-text-dim)] max-w-2xl mx-auto">
             Our comprehensive platform makes waste management easy, rewarding, and impactful for everyone.
           </p>
         </div>
@@ -61,15 +61,15 @@ export function Features() {
             return (
               <div
                 key={index}
-                className="bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-sm p-8 hover:shadow-xl transition-all"
+                className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-sm p-8 hover:shadow-xl transition-all"
               >
                 <div className="mb-6">
                   <Icon className="w-10 h-10 text-green-primary" strokeWidth={1.5} />
                 </div>
-                <h3 className="font-syne text-xl font-bold text-black mb-3">
+                <h3 className="font-syne text-xl font-bold text-[var(--color-foreground)] mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-[var(--color-text-dim)] leading-relaxed">
                   {feature.description}
                 </p>
               </div>

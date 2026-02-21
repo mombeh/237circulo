@@ -1,7 +1,17 @@
-import nextConfig from 'eslint-config-next'
-import prettier from 'eslint-config-prettier'
+import tseslint from 'typescript-eslint';
 
 export default [
-  ...nextConfig,
-  prettier,
-]
+  ...tseslint.configs.recommended,
+  {
+    files: ['**/*.{js,ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        browser: true,
+        node: true,
+        es2021: true,
+      },
+    },
+  },
+];

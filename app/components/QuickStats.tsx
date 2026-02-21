@@ -29,7 +29,7 @@ export function QuickStats() {
           return (
             <div
               key={index}
-              className="bg-[var(--card)] border border-[var(--border)] rounded-2xl shadow-sm p-8 text-center hover:shadow-xl transition-all"
+              className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-sm p-8 text-center hover:shadow-xl transition-all"
             >
               <div className="mb-4 flex justify-center">
                 <Icon className="w-8 h-8 text-green-primary" strokeWidth={1.5} />
@@ -39,7 +39,7 @@ export function QuickStats() {
                 {stat.value}
               </div>
 
-              <div className="text-black text-sm font-medium">
+              <div className="text-[var(--color-text-dim)] text-sm font-medium">
                 {stat.label}
               </div>
             </div>

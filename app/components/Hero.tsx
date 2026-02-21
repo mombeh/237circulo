@@ -10,13 +10,13 @@ export function Hero() {
 
       {/* Main content */}
       <div className="text-center max-w-3xl mx-auto relative z-10">
-        <h1 className="font-syne text-black text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter mb-6">
+        <h1 className="font-syne text-[var(--color-foreground)] text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tighter mb-6">
           Turn your waste into
           <br />
           <span className="text-green-primary">value</span> for the planet.
         </h1>
 
-        <p className="text-lg text-gray-600 mb-10 leading-relaxed">
+        <p className="text-lg text-[var(--color-text-dim)] mb-10 leading-relaxed">
           Transform waste management in cameroon. Connect generators, collectors, and recylers through AI-powered circular economy
         </p>
 
@@ -28,7 +28,7 @@ export function Hero() {
           >
             Get Started Free →
           </Link>
-          <button className="px-8 py-4 rounded-full border-2 border-gray-500 font-bold hover:bg-[var(--card)] transition-all text-gray-700">
+          <button className="px-8 py-4 rounded-full border-2 border-[var(--color-text-dim)] font-bold hover:bg-[var(--color-card)] transition-all text-[var(--color-text-dim)]">
             View Impact Data
           </button>
         </div>
