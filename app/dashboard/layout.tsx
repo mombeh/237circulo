@@ -10,11 +10,12 @@ import {
   Route,
   Settings,
   Menu,
-  X,
   Leaf,
   Bell,
   User,
   LogOut,
+  ShoppingBag,
+  MessageSquare,
 } from 'lucide-react';
 
 const navigation = [
@@ -22,6 +23,8 @@ const navigation = [
   { name: 'Waste Collection', href: '/dashboard/collection', icon: Trash2 },
   { name: 'AI Insights', href: '/dashboard/insights', icon: Brain },
   { name: 'Route Optimization', href: '/dashboard/routes', icon: Route },
+  { name: 'Marketplace', href: '/dashboard/marketplace', icon: ShoppingBag },
+  { name: 'AI Assistant', href: '/dashboard/ai-assistance', icon: MessageSquare },
   { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
