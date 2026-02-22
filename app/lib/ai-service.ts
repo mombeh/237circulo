@@ -1,301 +1,246 @@
 /**
- * AI Service - Frontend API Layer for 237Circulo Backend
+ * AI Service - Frontend API Layer for 237Circulo
  * 
- * This service communicates with the NestJS backend AI endpoints via the Next.js API proxy:
- * - GET  /api/ai/health -> GET  /ai/health
- * - POST /api/ai/classify -> POST /ai/classify (multipart)
- * - POST /api/ai/price -> POST /ai/price
- * - POST /api/ai/chat -> POST /ai/chat (streaming)
+ * Using MOCK DATA for demonstration purposes.
  * 
- * Make sure the NestJS backend is running at NEXT_PUBLIC_API_URL
- * and INTERNAL_API_KEY is configured in .env
+ * Features:
+ * - Waste Classification (mock)
+ * - Price Forecasting (mock)
+ * - Chat (placeholder)
  */
 
 import { ClassificationResult, PriceForecastResult, ChatMessage } from './types';
 
-// ── API Configuration ────────────────────────────────────────────────────────
+// ── Mock Data for Waste Classification ────────────────────────────────────────
 
-// Use the same origin - requests go through Next.js API proxy
-const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || 'your-internal-api-key-here';
+const mockClassificationResults: Record<string, ClassificationResult> = {
+  'plastic': {
+    category: 'Plastic',
+    sub_category: 'PET Bottles',
+    confidence: 'high',
+    recyclability_score: 85,
+    price_range_fcfa: { min: 50, max: 150 },
+    guidance: 'Clean and crush PET bottles before selling. Remove caps and labels for better prices.',
+  },
+  'metal': {
+    category: 'Metal',
+    sub_category: 'Aluminum Cans',
+    confidence: 'high',
+    recyclability_score: 95,
+    price_range_fcfa: { min: 200, max: 350 },
+    guidance: 'Aluminum has high value! Clean and flatten cans for best prices.',
+  },
+  'paper': {
+    category: 'Paper',
+    sub_category: 'Cardboard',
+    confidence: 'medium',
+    recyclability_score: 75,
+    price_range_fcfa: { min: 25, max: 75 },
+    guidance: 'Keep cardboard dry and free from food contamination. Flatten boxes.',
+  },
+  'glass': {
+    category: 'Glass',
+    sub_category: 'Glass Bottles',
+    confidence: 'high',
+    recyclability_score: 90,
+    price_range_fcfa: { min: 30, max: 80 },
+    guidance: 'Sort by color (clear, brown, green). Remove caps and rinse clean.',
+  },
+  'organic': {
+    category: 'Organic',
+    sub_category: 'Food Waste',
+    confidence: 'medium',
+    recyclability_score: 100,
+    price_range_fcfa: { min: 0, max: 25 },
+    guidance: 'Organic waste can be composted. Keep separate from recyclables.',
+  },
+  'e-waste': {
+    category: 'E-Waste',
+    sub_category: 'Small Electronics',
+    confidence: 'high',
+    recyclability_score: 70,
+    price_range_fcfa: { min: 500, max: 2000 },
+    guidance: 'Contains valuable metals! Do not break apart. Sell to certified collectors.',
+  },
+};
 
-/**
- * Get headers for API requests
- */
-function getHeaders(): HeadersInit {
-  return {
-    'Content-Type': 'application/json',
-    'X-API-Key': INTERNAL_API_KEY,
-  };
-}
+// ── Mock Data for Price Forecast ────────────────────────────────────────────
 
-/**
- * Get headers for multipart form requests (file uploads)
- */
-function getMultipartHeaders(): HeadersInit {
-  return {
-    'X-API-Key': INTERNAL_API_KEY,
-  };
-}
+const mockPriceForecasts: Record<string, PriceForecastResult> = {
+  'plastic-nkolfoulou': {
+    price_range_fcfa: { min: 50, max: 150 },
+    demand_trend: 'rising',
+    confidence: 'high',
+    rationale: 'High demand from recyclers in Nkolfoulou area. Limited supply keeps prices strong.',
+  },
+  'plastic-bastos': {
+    price_range_fcfa: { min: 60, max: 180 },
+    demand_trend: 'rising',
+    confidence: 'high',
+    rationale: 'Industrial area with high demand. Good infrastructure for recycling.',
+  },
+  'metal-nkolfoulou': {
+    price_range_fcfa: { min: 200, max: 400 },
+    demand_trend: 'stable',
+    confidence: 'high',
+    rationale: 'Consistent demand with stable prices. Export opportunities to nearby regions.',
+  },
+  'metal-biyem-assi': {
+    price_range_fcfa: { min: 180, max: 350 },
+    demand_trend: 'rising',
+    confidence: 'high',
+    rationale: 'Growing market with many local scrap dealers competing for materials.',
+  },
+  'paper-nkolfoulou': {
+    price_range_fcfa: { min: 25, max: 75 },
+    demand_trend: 'falling',
+    confidence: 'medium',
+    rationale: 'Digital transition reducing paper demand. Consider donating instead.',
+  },
+  'glass-nkolfoulou': {
+    price_range_fcfa: { min: 30, max: 80 },
+    demand_trend: 'stable',
+    confidence: 'medium',
+    rationale: 'Local glass manufacturers provide steady demand.',
+  },
+  'organic-nkolfoulou': {
+    price_range_fcfa: { min: 0, max: 25 },
+    demand_trend: 'rising',
+    confidence: 'low',
+    rationale: 'Composting initiatives growing. Agricultural demand increasing.',
+  },
+  'e-waste-nkolfoulou': {
+    price_range_fcfa: { min: 500, max: 2500 },
+    demand_trend: 'rising',
+    confidence: 'high',
+    rationale: 'High value metals. Limited collectors means premium prices.',
+  },
+};
 
-// ── Health Check ────────────────────────────────────────────────────────────
+const defaultPriceForecast: PriceForecastResult = {
+  price_range_fcfa: { min: 25, max: 100 },
+  demand_trend: 'stable',
+  confidence: 'medium',
+  rationale: 'Market price varies by quality. Contact local collectors for quotes.',
+};
 
-/**
- * Check if AI service is healthy
- */
-export async function checkAIHealth(): Promise<{ status: string }> {
-  const response = await fetch(`/api/ai/health`, {
-    method: 'GET',
-    headers: getHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error(`AI health check failed: ${response.statusText}`);
-  }
-
-  return response.json();
-}
-
-// ── Waste Classification ────────────────────────────────────────────────────
-
-export interface ClassifyRequest {
-  image?: File;
-  description?: string;
-}
+// ── Functions ────────────────────────────────────────────────────────────────
 
 /**
  * Classify waste from an image and/or text description
- * 
- * @param image - Optional image file (JPEG/PNG/WebP, max 5MB)
- * @param description - Optional text description
- * @returns ClassificationResult with category, sub_category, recyclability_score, etc.
  */
 export async function classifyWaste(
   image?: File,
   description?: string
 ): Promise<ClassificationResult> {
-  if (!image && !description) {
-    throw new Error('Provide at least one of: an image file or a text description.');
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1500));
+
+  const desc = description?.toLowerCase() || '';
+  
+  if (desc.includes('plastic') || desc.includes('bottle') || desc.includes('sachet') || desc.includes('poly')) {
+    return mockClassificationResults['plastic'];
+  }
+  if (desc.includes('metal') || desc.includes('aluminum') || desc.includes('can') || desc.includes('copper')) {
+    return mockClassificationResults['metal'];
+  }
+  if (desc.includes('paper') || desc.includes('cardboard') || desc.includes('box')) {
+    return mockClassificationResults['paper'];
+  }
+  if (desc.includes('glass') || desc.includes('bottle') || desc.includes('jar')) {
+    return mockClassificationResults['glass'];
+  }
+  if (desc.includes('organic') || desc.includes('food') || desc.includes('vegetable') || desc.includes('fruit')) {
+    return mockClassificationResults['organic'];
+  }
+  if (desc.includes('e-waste') || desc.includes('electronic') || desc.includes('phone') || desc.includes('computer')) {
+    return mockClassificationResults['e-waste'];
   }
 
-  const formData = new FormData();
-
-  if (image) {
-    // Validate file type
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(image.type)) {
-      throw new Error('Only JPEG, PNG, and WebP images are accepted.');
-    }
-    // Validate file size (5MB max)
-    if (image.size > 5 * 1024 * 1024) {
-      throw new Error('Image must be less than 5MB.');
-    }
-    formData.append('image', image);
-  }
-
-  if (description) {
-    formData.append('description', description.trim());
-  }
-
-  const response = await fetch(`/api/ai/classify`, {
-    method: 'POST',
-    headers: getMultipartHeaders(),
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `Classification failed: ${response.statusText}`);
-  }
-
-  return response.json();
-}
-
-// ── Price Forecasting ────────────────────────────────────────────────────────
-
-export interface PriceForecastRequest {
-  wasteType: string;
-  zoneId: string;
+  const keys = Object.keys(mockClassificationResults);
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+  return mockClassificationResults[randomKey];
 }
 
 /**
  * Forecast a fair price for waste in a given zone
- * 
- * @param wasteType - Type of waste (e.g., "plastic", "metal", "paper")
- * @param zoneId - UUID of the zone
- * @returns PriceForecastResult with price range, demand trend, confidence
  */
 export async function forecastPrice(
   wasteType: string,
   zoneId: string
 ): Promise<PriceForecastResult> {
-  if (!wasteType?.trim()) {
-    throw new Error('waste_type is required.');
-  }
-  if (!zoneId?.trim()) {
-    throw new Error('zone_id is required.');
-  }
+  await new Promise(resolve => setTimeout(resolve, 1200));
 
-  const response = await fetch(`/api/ai/price`, {
-    method: 'POST',
-    headers: getHeaders(),
-    body: JSON.stringify({
-      waste_type: wasteType.trim(),
-      zone_id: zoneId.trim(),
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `Price forecast failed: ${response.statusText}`);
+  const key = `${wasteType}-${zoneId}`;
+  
+  if (mockPriceForecasts[key]) {
+    return mockPriceForecasts[key];
   }
 
-  return response.json();
+  const zoneName = zoneId.replace('-', ' ').toLowerCase();
+  for (const k of Object.keys(mockPriceForecasts)) {
+    if (k.includes(wasteType) && k.includes(zoneName)) {
+      return mockPriceForecasts[k];
+    }
+  }
+
+  return {
+    ...defaultPriceForecast,
+    demand_trend: 'stable',
+    confidence: 'medium',
+  };
 }
 
-// ── Streaming Chat ────────────────────────────────────────────────────────────
+/**
+ * Chat function - placeholder
+ */
+export async function streamChat(
+  _messages: ChatMessage[],
+  _language: string,
+  onToken: (token: string) => void,
+  onDone: () => void,
+  _onError: (error: string) => void
+): Promise<() => void> {
+  const mockResponse = `I'm sorry, the AI chat feature is currently under development. 
+  
+In the meantime, you can:
+• Use Waste Classification to identify materials
+• Use Price Forecast to check current market prices
+• Check the Marketplace for buying/selling recyclables
+
+How can I help you with waste classification or pricing?`;
+
+  let index = 0;
+  const interval = setInterval(() => {
+    if (index < mockResponse.length) {
+      onToken(mockResponse[index]);
+      index++;
+    } else {
+      clearInterval(interval);
+      onDone();
+    }
+  }, 30);
+
+  return () => clearInterval(interval);
+}
 
 export type ChatLanguage = 'fr' | 'en' | 'pidgin';
 
-export interface ChatRequest {
-  messages: ChatMessage[];
-  language?: ChatLanguage;
-}
+// ── Utility Functions ──────────────────────────────────────────────────────
 
-export type TokenHandler = (token: string) => void;
-export type DoneHandler = () => void;
-export type ErrorHandler = (error: string) => void;
-
-/**
- * Stream chat messages from the AI assistant
- * 
- * @param messages - Array of chat messages with role and content
- * @param language - Preferred language (fr, en, pidgin)
- * @param onToken - Callback for each token received
- * @param onDone - Callback when stream is complete
- * @param onError - Callback on error
- * @returns Promise that resolves when stream starts (consumer should NOT await completion)
- */
-export async function streamChat(
-  messages: ChatMessage[],
-  language: ChatLanguage = 'fr',
-  onToken: TokenHandler,
-  onDone: DoneHandler,
-  onError: ErrorHandler
-): Promise<() => void> {
-  const response = await fetch(`/api/ai/chat`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': INTERNAL_API_KEY,
-    },
-    body: JSON.stringify({
-      messages,
-      language,
-    }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || `Chat failed: ${response.statusText}`);
-  }
-
-  if (!response.body) {
-    throw new Error('No response body received');
-  }
-
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-
-  const processStream = async () => {
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) {
-          // Check for remaining data in buffer
-          if (buffer.trim()) {
-            try {
-              const data = JSON.parse(buffer);
-              if (data.error) {
-                onError(data.error);
-              } else if (data.token) {
-                onToken(data.token);
-              }
-            } catch {
-              // Ignore parse errors for incomplete chunks
-            }
-          }
-          onDone();
-          break;
-        }
-
-        buffer += decoder.decode(value, { stream: true });
-
-        // Process complete SSE messages
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || ''; // Keep incomplete line in buffer
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const dataStr = line.slice(6).trim();
-            
-            if (dataStr === '[DONE]') {
-              onDone();
-              reader.cancel();
-              return;
-            }
-
-            try {
-              const data = JSON.parse(dataStr);
-              
-              if (data.error) {
-                onError(data.error);
-              } else if (data.token) {
-                onToken(data.token);
-              }
-            } catch {
-              console.warn('Failed to parse SSE data:', dataStr);
-            }
-          }
-        }
-      }
-    } catch (err) {
-      if ((err as Error).name !== 'CancelError') {
-        onError((err as Error).message || 'Stream error');
-      }
-    }
-  };
-
-  processStream();
-
-  // Return cleanup function
-  return () => {
-    reader.cancel();
-  };
-}
-
-// ── Utility: Get Default Zone ───────────────────────────────────────────────
-
-/**
- * Get list of available zones (would need to be implemented with backend endpoint)
- * This is a placeholder that returns common Cameroon zones
- */
 export function getDefaultZones(): { id: string; name: string }[] {
   return [
     { id: 'nkolfoulou', name: 'Nkolfoulou' },
     { id: 'bastos', name: 'Bastos' },
     { id: 'biyem-assi', name: 'Biyem-Assi' },
     { id: 'mvan', name: 'Mvan' },
+    { id: 'essos', name: 'Essos' },
+    { id: 'akwa', name: 'Akwa' },
     { id: 'tsinga', name: 'Tsinga' },
     { id: 'ngousso', name: 'Ngousso' },
-    { id: 'emana', name: 'Emana' },
-    { id: 'odza', name: 'Odza' },
   ];
 }
 
-/**
- * Get list of common waste types
- */
 export function getWasteTypes(): string[] {
   return [
     'plastic',
@@ -306,7 +251,5 @@ export function getWasteTypes(): string[] {
     'e-waste',
     'textile',
     'rubber',
-    'hazardous',
-    'other',
   ];
 }

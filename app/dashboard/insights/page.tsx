@@ -8,7 +8,6 @@ import {
   Target,
   Lightbulb,
   Zap,
-  Clock,
   Calendar,
   ChevronRight,
   RefreshCw,
@@ -19,73 +18,73 @@ const predictions = [
   {
     id: 1,
     type: 'overflow',
-    zone: 'Douala 3',
-    probability: 87,
+    zone: 'Nkolfoulou',
+    probability: 67,
     timeframe: '2 hours',
     recommendation: 'Schedule immediate collection',
   },
   {
     id: 2,
     type: 'volume',
-    zone: 'Akwa',
-    probability: 73,
-    timeframe: '24 hours',
+    zone: 'Biyem-Assi',
+    probability: 53,
+    timeframe: '4 hours',
     recommendation: 'Prepare additional capacity',
   },
   {
     id: 3,
     type: 'equipment',
-    zone: 'Truck #12',
-    probability: 65,
-    timeframe: '48 hours',
+    zone: 'Truck #2',
+    probability: 45,
+    timeframe: '24 hours',
     recommendation: 'Schedule preventive maintenance',
   },
 ];
 
 const aiMetrics = [
-  { name: 'Prediction Accuracy', value: '94.2%', trend: '+2.1%', icon: Target },
-  { name: 'Models Active', value: '12', trend: '+3', icon: Brain },
-  { name: 'Data Processed', value: '2.4 GB', trend: '+15%', icon: Activity },
-  { name: 'Insights Generated', value: '847', trend: '+124', icon: Lightbulb },
+  { name: 'Prediction Accuracy', value: '82.4%', trend: '+2.1%', icon: Target },
+  { name: 'Models Active', value: '4', trend: '+1', icon: Brain },
+  { name: 'Data Processed', value: '120 MB', trend: '+15%', icon: Activity },
+  { name: 'Insights Generated', value: '24', trend: '+8', icon: Lightbulb },
 ];
 
 const insights = [
   {
     category: 'Optimization',
     title: 'Route Efficiency Improvement',
-    description: 'AI analysis suggests consolidating Zone 2 and Zone 4 collections on Tuesdays, potentially reducing fuel costs by 18%.',
+    description: 'AI analysis suggests consolidating Zone Nkolfoulou and Biyem-Assi collections on the same day, potentially reducing fuel costs by 15%.',
     impact: 'High',
     impactColor: 'text-green-500',
   },
   {
     category: 'Prediction',
-    title: 'Seasonal Waste Increase',
-    description: 'Historical data indicates a 23% increase in organic waste expected during the upcoming holiday season.',
+    title: 'Daily Waste Increase',
+    description: 'Historical data indicates a 20% increase in organic waste expected during the weekend.',
     impact: 'Medium',
     impactColor: 'text-yellow-500',
   },
   {
     category: 'Maintenance',
-    title: 'Equipment Failure Prediction',
-    description: 'Truck #7 shows patterns similar to previous failures. Recommend inspection within 7 days.',
-    impact: 'High',
-    impactColor: 'text-green-500',
+    title: 'Equipment Check',
+    description: 'Truck #2 shows patterns that suggest a minor issue. Recommend inspection within 3 days.',
+    impact: 'Medium',
+    impactColor: 'text-yellow-500',
   },
   {
     category: 'Recycling',
-    title: 'Recycling Program Opportunity',
-    description: 'Analysis shows Zone 5 has 34% higher recyclable content than average. Consider targeted education campaign.',
+    title: 'Recycling Opportunity',
+    description: 'Analysis shows Biyem-Assi has 28% higher recyclable content than average. Consider targeted collection.',
     impact: 'Medium',
     impactColor: 'text-yellow-500',
   },
 ];
 
 const modelPerformance = [
-  { name: 'Overflow Detection', accuracy: 96, latency: '120ms', status: 'Active' },
-  { name: 'Volume Prediction', accuracy: 92, latency: '250ms', status: 'Active' },
-  { name: 'Route Optimization', accuracy: 89, latency: '1.2s', status: 'Active' },
-  { name: 'Maintenance Prediction', accuracy: 85, latency: '450ms', status: 'Training' },
-  { name: 'Anomaly Detection', accuracy: 94, latency: '80ms', status: 'Active' },
+  { name: 'Overflow Detection', accuracy: 86, latency: '120ms', status: 'Active' },
+  { name: 'Volume Prediction', accuracy: 82, latency: '250ms', status: 'Active' },
+  { name: 'Route Optimization', accuracy: 79, latency: '1.2s', status: 'Active' },
+  { name: 'Maintenance Prediction', accuracy: 75, latency: '450ms', status: 'Training' },
+  { name: 'Anomaly Detection', accuracy: 84, latency: '80ms', status: 'Active' },
 ];
 
 export default function InsightsPage() {
@@ -148,7 +147,7 @@ export default function InsightsPage() {
             <h2 className="text-lg font-semibold text-[var(--color-foreground)]">Active Predictions</h2>
             <p className="text-sm text-[var(--color-text-dim)]">Real-time AI-generated alerts</p>
           </div>
-          <button className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700">
+          <button className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700" onClick={() => window.location.href = '/dashboard/ai-assistance'}>
             View All <ChevronRight className="h-4 w-4" />
           </button>
         </div>
@@ -211,7 +210,7 @@ export default function InsightsPage() {
               </div>
               <h3 className="mt-3 font-medium text-[var(--color-foreground)]">{insight.title}</h3>
               <p className="mt-2 text-sm text-[var(--color-text-dim)]">{insight.description}</p>
-              <button className="mt-3 text-sm text-green-600 hover:text-green-700">
+              <button className="mt-3 text-sm text-green-600 hover:text-green-700" onClick={() => window.location.href = '/dashboard/ai-assistance'}>
                 Learn More →
               </button>
             </div>
@@ -226,7 +225,7 @@ export default function InsightsPage() {
             <h2 className="text-lg font-semibold text-[var(--color-foreground)]">Model Performance</h2>
             <p className="text-sm text-[var(--color-text-dim)]">AI model accuracy and latency metrics</p>
           </div>
-          <button className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700">
+          <button className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700" onClick={() => window.location.href = '/dashboard/ai-assistance'}>
             Manage Models <ChevronRight className="h-4 w-4" />
           </button>
         </div>

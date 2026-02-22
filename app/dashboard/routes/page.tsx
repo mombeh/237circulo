@@ -9,64 +9,138 @@ import {
   Fuel,
   DollarSign,
   Navigation,
-  Play,
-  Pause,
   CheckCircle,
-  ArrowRight,
   Calendar,
   Zap,
+  X,
 } from 'lucide-react';
 
-const routes = [
-  {
-    id: 'RT-001',
-    name: 'Zone Nord - Morning',
-    zones: ['Nkolfoulou', 'Biyem-Assi', 'Essos'],
-    status: 'Active',
-    distance: '42 km',
-    duration: '3h 15m',
-    collections: 24,
-    fuel: '12.5 L',
-    efficiency: 94,
-  },
-  {
-    id: 'RT-002',
-    name: 'Zone Centre - Afternoon',
-    zones: ['Mvan', 'Nlongkak', 'Bastos'],
-    status: 'Scheduled',
-    distance: '38 km',
-    duration: '2h 45m',
-    collections: 18,
-    fuel: '10.2 L',
-    efficiency: 89,
-  },
-  {
-    id: 'RT-003',
-    name: 'Zone Sud - Evening',
-    zones: ['Oliga', 'Nkolbisson', 'Mimboman'],
-    status: 'Pending',
-    distance: '35 km',
-    duration: '2h 30m',
-    collections: 15,
-    fuel: '9.8 L',
-    efficiency: 92,
-  },
-];
+interface RouteData {
+  id: string;
+  name: string;
+  zones: string[];
+  status: string;
+  distance: string;
+  duration: string;
+  collections: number;
+  fuel: string;
+  efficiency: number;
+}
 
-const activeRoutes = [
-  { id: 1, name: 'Route 1 - Douala', progress: 75, collected: 18, remaining: 6 },
-  { id: 2, name: 'Route 2 - Yaoundé', progress: 45, collected: 12, remaining: 15 },
-  { id: 3, name: 'Route 3 - Buea', progress: 90, collected: 22, remaining: 2 },
-];
-
-const collectors = [
-  { id: 1, name: 'Paul T.', vehicle: 'Truck #12', status: 'Active', location: 'Nkolfoulou' },
-  { id: 2, name: 'Marie L.', vehicle: 'Van #05', status: 'Active', location: 'Biyem-Assi' },
-  { id: 3, name: 'Jean M.', vehicle: 'Truck #03', status: 'Break', location: 'Essos' },
-];
+const zones = ['Nkolfoulou', 'Biyem-Assi', 'Essos', 'Mvan', 'Bastos', 'Akwa', 'Tonga', 'Odza'];
 
 export default function RoutesPage() {
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [showOptimizeModal, setShowOptimizeModal] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [optimizationComplete, setOptimizationComplete] = useState(false);
+  
+  // Schedule form state
+  const [scheduleForm, setScheduleForm] = useState({
+    routeName: '',
+    selectedZones: [] as string[],
+    date: '',
+    time: '',
+  });
+
+  const [routes, setRoutes] = useState<RouteData[]>([
+    {
+      id: 'RT-001',
+      name: 'Morning Route - North',
+      zones: ['Nkolfoulou', 'Biyem-Assi', 'Essos'],
+      status: 'Active',
+      distance: '8 km',
+      duration: '1h 30m',
+      collections: 8,
+      fuel: '2.5 L',
+      efficiency: 94,
+    },
+    {
+      id: 'RT-002',
+      name: 'Afternoon Route - Centre',
+      zones: ['Mvan', 'Bastos'],
+      status: 'Scheduled',
+      distance: '6 km',
+      duration: '1h 15m',
+      collections: 5,
+      fuel: '1.8 L',
+      efficiency: 89,
+    },
+    {
+      id: 'RT-003',
+      name: 'Evening Route - South',
+      zones: ['Odza', 'Tonga'],
+      status: 'Pending',
+      distance: '5 km',
+      duration: '1h 00m',
+      collections: 4,
+      fuel: '1.5 L',
+      efficiency: 92,
+    },
+  ]);
+
+  const [activeRoutes] = useState([
+    { id: 1, name: 'Route 1 - Nkolfoulou', progress: 75, collected: 6, remaining: 2 },
+    { id: 2, name: 'Route 2 - Biyem-Assi', progress: 40, collected: 4, remaining: 6 },
+    { id: 3, name: 'Route 3 - Essos', progress: 60, collected: 3, remaining: 2 },
+  ]);
+
+  const [collectors] = useState([
+    { id: 1, name: 'Paul T.', vehicle: 'Van #1', status: 'Active', location: 'Nkolfoulou' },
+    { id: 2, name: 'Marie L.', vehicle: 'Van #2', status: 'Active', location: 'Biyem-Assi' },
+    { id: 3, name: 'Jean M.', vehicle: 'Van #3', status: 'Break', location: 'Essos' },
+  ]);
+
+  const handleSchedule = () => {
+    if (!scheduleForm.routeName || scheduleForm.selectedZones.length === 0 || !scheduleForm.date || !scheduleForm.time) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    const newRoute: RouteData = {
+      id: `RT-${String(routes.length + 1).padStart(3, '0')}`,
+      name: scheduleForm.routeName,
+      zones: scheduleForm.selectedZones,
+      status: 'Scheduled',
+      distance: `${scheduleForm.selectedZones.length * 2.5} km`,
+      duration: `${scheduleForm.selectedZones.length * 25} min`,
+      collections: scheduleForm.selectedZones.length * 2,
+      fuel: `${scheduleForm.selectedZones.length * 0.8} L`,
+      efficiency: Math.floor(85 + Math.random() * 10),
+    };
+
+    setRoutes([...routes, newRoute]);
+    setScheduleForm({ routeName: '', selectedZones: [], date: '', time: '' });
+    setShowScheduleModal(false);
+    alert('Route scheduled successfully!');
+  };
+
+  const handleOptimize = () => {
+    setIsOptimizing(true);
+    setOptimizationComplete(false);
+    
+    // Simulate optimization
+    setTimeout(() => {
+      setRoutes(routes.map(route => ({
+        ...route,
+        efficiency: Math.min(99, route.efficiency + Math.floor(Math.random() * 5)),
+        fuel: `${(parseFloat(route.fuel) * 0.9).toFixed(1)} L`,
+        distance: `${(parseFloat(route.distance) * 0.9).toFixed(1)} km`,
+      })));
+      setIsOptimizing(false);
+      setOptimizationComplete(true);
+    }, 2000);
+  };
+
+  const toggleZoneSelection = (zone: string) => {
+    setScheduleForm(prev => ({
+      ...prev,
+      selectedZones: prev.selectedZones.includes(zone)
+        ? prev.selectedZones.filter(z => z !== zone)
+        : [...prev.selectedZones, zone]
+    }));
+  };
 
   return (
     <div className="space-y-8">
@@ -77,16 +151,157 @@ export default function RoutesPage() {
           <p className="text-[var(--color-text-dim)]">AI-powered collection route planning</p>
         </div>
         <div className="flex gap-2">
-          <button className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-2 text-sm font-medium text-[var(--color-foreground)] hover:bg-[var(--color-border)]">
+          <button 
+            className="flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-2 text-sm font-medium text-[var(--color-foreground)] hover:bg-[var(--color-border)]"
+            onClick={() => setShowScheduleModal(true)}
+          >
             <Calendar className="h-4 w-4" />
             Schedule
           </button>
-          <button className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">
+          <button 
+            className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+            onClick={() => setShowOptimizeModal(true)}
+          >
             <Zap className="h-4 w-4" />
             Optimize Routes
           </button>
         </div>
       </div>
+
+      {/* Schedule Modal */}
+      {showScheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-md rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-[var(--color-foreground)]">Schedule New Route</h2>
+              <button onClick={() => setShowScheduleModal(false)} className="p-1 hover:bg-[var(--color-border)] rounded-lg">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">Route Name</label>
+                <input
+                  type="text"
+                  value={scheduleForm.routeName}
+                  onChange={(e) => setScheduleForm({ ...scheduleForm, routeName: e.target.value })}
+                  placeholder="e.g., Morning Route - North"
+                  className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">Select Zones</label>
+                <div className="flex flex-wrap gap-2">
+                  {zones.map((zone) => (
+                    <button
+                      key={zone}
+                      onClick={() => toggleZoneSelection(zone)}
+                      className={`rounded-full px-3 py-1 text-sm ${
+                        scheduleForm.selectedZones.includes(zone)
+                          ? 'bg-green-600 text-white'
+                          : 'border border-[var(--color-border)] text-[var(--color-text-dim)]'
+                      }`}
+                    >
+                      {zone}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">Date</label>
+                  <input
+                    type="date"
+                    value={scheduleForm.date}
+                    onChange={(e) => setScheduleForm({ ...scheduleForm, date: e.target.value })}
+                    className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">Time</label>
+                  <input
+                    type="time"
+                    value={scheduleForm.time}
+                    onChange={(e) => setScheduleForm({ ...scheduleForm, time: e.target.value })}
+                    className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm"
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={handleSchedule}
+                className="w-full flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+              >
+                <Calendar className="h-4 w-4" />
+                Schedule Route
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Optimize Modal */}
+      {showOptimizeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-md rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-[var(--color-foreground)]">AI Route Optimization</h2>
+              <button onClick={() => { setShowOptimizeModal(false); setOptimizationComplete(false); }} className="p-1 hover:bg-[var(--color-border)] rounded-lg">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {isOptimizing ? (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-[var(--color-foreground)]">Analyzing routes...</p>
+                <p className="text-sm text-[var(--color-text-dim)] mt-2">Finding the most efficient paths</p>
+              </div>
+            ) : optimizationComplete ? (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="h-8 w-8 text-green-600" />
+                </div>
+                <p className="text-lg font-semibold text-[var(--color-foreground)]">Optimization Complete!</p>
+                <p className="text-sm text-[var(--color-text-dim)] mt-2">
+                  Routes optimized for better efficiency. Fuel consumption reduced by ~10%.
+                </p>
+                <button
+                  onClick={() => { setShowOptimizeModal(false); setOptimizationComplete(false); }}
+                  className="mt-4 w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+                  <h3 className="font-medium text-green-700 dark:text-green-400 mb-2">AI Optimization Benefits</h3>
+                  <ul className="text-sm text-green-600 dark:text-green-500 space-y-1">
+                    <li>• Reduced fuel consumption</li>
+                    <li>• Optimized route paths</li>
+                    <li>• Better time management</li>
+                    <li>• Lower operational costs</li>
+                  </ul>
+                </div>
+                <p className="text-sm text-[var(--color-text-dim)]">
+                  Click below to let AI analyze your current routes and optimize them for maximum efficiency.
+                </p>
+                <button
+                  onClick={handleOptimize}
+                  className="w-full flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+                >
+                  <Zap className="h-4 w-4" />
+                  Start Optimization
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -97,8 +312,8 @@ export default function RoutesPage() {
             </div>
             <span className="text-sm text-[var(--color-text-dim)]">Active Routes</span>
           </div>
-          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">8</p>
-          <p className="text-sm text-green-500">+2 from yesterday</p>
+          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">{routes.length}</p>
+          <p className="text-sm text-green-500">+1 from yesterday</p>
         </div>
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
           <div className="flex items-center gap-3">
@@ -107,8 +322,8 @@ export default function RoutesPage() {
             </div>
             <span className="text-sm text-[var(--color-text-dim)]">Distance Covered</span>
           </div>
-          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">156 km</p>
-          <p className="text-sm text-green-500">+18% efficiency</p>
+          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">19 km</p>
+          <p className="text-sm text-green-500">+12% efficiency</p>
         </div>
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
           <div className="flex items-center gap-3">
@@ -117,8 +332,8 @@ export default function RoutesPage() {
             </div>
             <span className="text-sm text-[var(--color-text-dim)]">Fuel Saved</span>
           </div>
-          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">32.5 L</p>
-          <p className="text-sm text-green-500">$28.50 value</p>
+          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">5.8 L</p>
+          <p className="text-sm text-green-500">$5.20 value</p>
         </div>
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
           <div className="flex items-center gap-3">
@@ -127,7 +342,7 @@ export default function RoutesPage() {
             </div>
             <span className="text-sm text-[var(--color-text-dim)]">Cost Reduction</span>
           </div>
-          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">24%</p>
+          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">18%</p>
           <p className="text-sm text-green-500">vs. manual planning</p>
         </div>
       </div>
