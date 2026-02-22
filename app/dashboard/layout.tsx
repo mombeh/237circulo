@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Trash2,
@@ -12,11 +12,11 @@ import {
   Menu,
   Leaf,
   Bell,
-  User,
   LogOut,
   ShoppingBag,
   MessageSquare,
 } from 'lucide-react';
+import { getStoredSettings } from '@/app/lib/settings';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -34,7 +34,86 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [user, setUser] = useState<{ name: string; email: string; avatar?: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check for authentication
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+    
+    if (!token) {
+      // No token found, redirect to login
+      router.push('/auth');
+      return;
+    }
+    
+    // Load settings from localStorage
+    const storedSettings = getStoredSettings();
+    
+    // Use settings data as user info if available
+    if (storedSettings.name || storedSettings.email) {
+      setUser({
+        name: storedSettings.name || 'User',
+        email: storedSettings.email || '',
+        avatar: storedSettings.avatar_url || undefined,
+      });
+    } else if (userData) {
+      // Fallback to localStorage user data
+      try {
+        setUser(JSON.parse(userData));
+      } catch {
+        setUser(null);
+      }
+    }
+    setLoading(false);
+  }, [router]);
+
+  // Listen for settings changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const updatedSettings = getStoredSettings();
+      if (updatedSettings.name || updatedSettings.email) {
+        setUser({
+          name: updatedSettings.name || 'User',
+          email: updatedSettings.email || '',
+          avatar: updatedSettings.avatar_url || undefined,
+        });
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    // Also listen for custom event when settings are updated in same window
+    window.addEventListener('settings-updated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('settings-updated', handleStorageChange);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    // Clear authentication data
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    // Redirect to login page
+    router.push('/auth');
+  };
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)]">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[var(--color-foreground)]">Loading...</p>
+          <p className="text-sm text-[var(--color-text-dim)] mt-2">Verifying your session</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[var(--color-background)]">
@@ -53,15 +132,15 @@ export default function DashboardLayout({
         }`}
       >
         <div className="flex h-full flex-col">
-          {/* Logo */}
+          {/* Logo - links to landing page */}
           <div className="flex h-16 items-center gap-2 border-b border-[var(--color-border)] px-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-600">
+            <Link href="/" className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-600 hover:bg-green-700 transition-colors">
               <Leaf className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-[var(--color-foreground)]">237Circulo</h1>
+            </Link>
+            <Link href="/" className="flex-1">
+              <h1 className="text-lg font-bold text-[var(--color-foreground)] hover:text-green-primary transition-colors">237Circulo</h1>
               <p className="text-xs text-[var(--color-text-dim)]">Waste AI</p>
-            </div>
+            </Link>
           </div>
 
           {/* Navigation */}
@@ -89,19 +168,33 @@ export default function DashboardLayout({
           {/* User section */}
           <div className="border-t border-[var(--color-border)] p-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-border)]">
-                <User className="h-5 w-5 text-[var(--color-text-dim)]" />
-              </div>
+              {user?.avatar ? (
+                <img 
+                  src={user.avatar} 
+                  alt={user.name} 
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600">
+                  <span className="text-sm font-bold text-white">
+                    {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                  </span>
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[var(--color-foreground)] truncate">
-                  Admin User
+                  {user?.name || 'User'}
                 </p>
                 <p className="text-xs text-[var(--color-text-dim)] truncate">
-                  admin@237circulo.com
+                  {user?.email || 'user@example.com'}
                 </p>
               </div>
-              <button className="p-2 rounded-lg hover:bg-[var(--color-border)] transition-colors">
-                <LogOut className="h-4 w-4 text-[var(--color-text-dim)]" />
+              <button 
+                onClick={handleLogout}
+                className="p-2 rounded-lg hover:bg-[var(--color-border)] transition-colors text-red-500 hover:text-red-600"
+                title="Logout"
+              >
+                <LogOut className="h-4 w-4" />
               </button>
             </div>
           </div>

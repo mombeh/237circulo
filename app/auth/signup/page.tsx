@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { getStoredSettings } from '@/app/lib/settings'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -14,6 +15,14 @@ export default function SignUpPage() {
   const [prefLang, setPrefLang] = useState('English')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Load default language from settings
+  useEffect(() => {
+    const settings = getStoredSettings()
+    if (settings.pref_lang) {
+      setPrefLang(settings.pref_lang)
+    }
+  }, [])
 
   const handleGoogleSignUp = () => {
     // Redirect to backend Google OAuth endpoint
