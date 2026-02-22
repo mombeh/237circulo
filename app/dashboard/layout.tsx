@@ -16,6 +16,7 @@ import {
   ShoppingBag,
   MessageSquare,
 } from 'lucide-react';
+import { getStoredSettings } from '@/app/lib/settings';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -49,17 +50,49 @@ export default function DashboardLayout({
       return;
     }
     
-    // Parse user data if available
-    if (userData) {
+    // Load settings from localStorage
+    const storedSettings = getStoredSettings();
+    
+    // Use settings data as user info if available
+    if (storedSettings.name || storedSettings.email) {
+      setUser({
+        name: storedSettings.name || 'User',
+        email: storedSettings.email || '',
+        avatar: storedSettings.avatar_url || undefined,
+      });
+    } else if (userData) {
+      // Fallback to localStorage user data
       try {
         setUser(JSON.parse(userData));
       } catch {
-        // If user data is invalid, use default
         setUser(null);
       }
     }
     setLoading(false);
   }, [router]);
+
+  // Listen for settings changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const updatedSettings = getStoredSettings();
+      if (updatedSettings.name || updatedSettings.email) {
+        setUser({
+          name: updatedSettings.name || 'User',
+          email: updatedSettings.email || '',
+          avatar: updatedSettings.avatar_url || undefined,
+        });
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    // Also listen for custom event when settings are updated in same window
+    window.addEventListener('settings-updated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('settings-updated', handleStorageChange);
+    };
+  }, []);
 
   const handleLogout = () => {
     // Clear authentication data
