@@ -58,15 +58,15 @@ export default function AIAssistancePage() {
     {
       id: 1,
       role: 'assistant',
-      content: `👋 Hello! I'm your 237Circulo AI Assistant.
+      content: ` Hello! I'm your 237Circulo AI Assistant.
 
 I can help you with:
-- 🗑️ Waste classification (upload photo)
-- 💰 Price forecasting for waste
-- 📊 Recycling analytics
-- 🗺️ Route optimization
-- 📅 Scheduling
-- 💡 Eco-tips
+- Waste classification (upload photo)
+- Price forecasting for waste
+- Recycling analytics
+- Route optimization
+- Scheduling
+- Eco-tips
 
 How can I help you today?`,
       timestamp: new Date(),

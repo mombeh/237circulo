@@ -2,95 +2,29 @@
 
 import { useState } from 'react';
 import {
-  ShoppingBag,
   Search,
   Filter,
   Star,
   Heart,
   Package,
   Truck,
+  Plus,
+  X,
 } from 'lucide-react';
 
-const products = [
-  {
-    id: 1,
-    name: 'Recycled Plastic Pellets',
-    category: 'Recycled Materials',
-    price: 45000,
-    unit: 'per ton',
-    image: '/trash1.jpg',
-    rating: 4.8,
-    reviews: 124,
-    seller: 'GreenTech Cameroon',
-    location: 'Douala',
-    inStock: true,
-  },
-  {
-    id: 2,
-    name: 'Compost Organic Fertilizer',
-    category: 'Organic Products',
-    price: 15000,
-    unit: 'per 50kg bag',
-    image: '/trash1.jpg',
-    rating: 4.9,
-    reviews: 89,
-    seller: 'EcoFarm Solutions',
-    location: 'Yaoundé',
-    inStock: true,
-  },
-  {
-    id: 3,
-    name: 'Recycled Paper Bales',
-    category: 'Recycled Materials',
-    price: 35000,
-    unit: 'per ton',
-    image: '/trash1.jpg',
-    rating: 4.6,
-    reviews: 56,
-    seller: 'PaperRecycle Ltd',
-    location: 'Douala',
-    inStock: true,
-  },
-  {
-    id: 4,
-    name: 'Metal Scraps (Aluminum)',
-    category: 'Metal Recycling',
-    price: 80000,
-    unit: 'per ton',
-    image: '/trash1.jpg',
-    rating: 4.7,
-    reviews: 203,
-    seller: 'MetalWorks CM',
-    location: 'Kribi',
-    inStock: true,
-  },
-  {
-    id: 5,
-    name: 'Biodegradable Bags',
-    category: 'Eco Products',
-    price: 2500,
-    unit: 'per pack (100 pcs)',
-    image: '/trash1.jpg',
-    rating: 4.5,
-    reviews: 178,
-    seller: 'EcoPack Africa',
-    location: 'Douala',
-    inStock: false,
-  },
-  {
-    id: 6,
-    name: 'Glass Cullet',
-    category: 'Glass Recycling',
-    price: 25000,
-    unit: 'per ton',
-    image: '/trash1.jpg',
-    rating: 4.4,
-    reviews: 67,
-    seller: 'GlassRecycle CM',
-    location: 'Bafoussam',
-    inStock: true,
-  },
-];
+interface Product {
+  id: number;
+  name: string;
+  category: string;
+  price: number;
+  unit: string;
+  image: string;
+  rating: number;
+  reviews: number;
+  seller: string;
+  location: string;
+  inStock: boolean;
+}
 
 const categories = [
   'All Categories',
@@ -102,10 +36,102 @@ const categories = [
   'E-Waste',
 ];
 
+const wasteTypes = ['Recycled Materials', 'Organic Products', 'Metal Recycling', 'Eco Products', 'Glass Recycling', 'E-Waste'];
+const locations = ['Douala', 'Yaoundé', 'Kribi', 'Bafoussam', 'Buea'];
+
 export default function MarketplacePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [products, setProducts] = useState<Product[]>([
+    {
+      id: 1,
+      name: 'Recycled Plastic Pellets',
+      category: 'Recycled Materials',
+      price: 15000,
+      unit: 'per 20kg bag',
+      image: '/trash1.jpg',
+      rating: 4.5,
+      reviews: 12,
+      seller: 'GreenTech CM',
+      location: 'Douala',
+      inStock: true,
+    },
+    {
+      id: 2,
+      name: 'Compost Organic Fertilizer',
+      category: 'Organic Products',
+      price: 5000,
+      unit: 'per 10kg bag',
+      image: '/trash1.jpg',
+      rating: 4.7,
+      reviews: 8,
+      seller: 'EcoFarm Solutions',
+      location: 'Yaoundé',
+      inStock: true,
+    },
+    {
+      id: 3,
+      name: 'Recycled Paper Bales',
+      category: 'Recycled Materials',
+      price: 8000,
+      unit: 'per 15kg bale',
+      image: '/trash1.jpg',
+      rating: 4.2,
+      reviews: 5,
+      seller: 'PaperRecycle Ltd',
+      location: 'Douala',
+      inStock: true,
+    },
+    {
+      id: 4,
+      name: 'Metal Scraps (Aluminum)',
+      category: 'Metal Recycling',
+      price: 25000,
+      unit: 'per 10kg',
+      image: '/trash1.jpg',
+      rating: 4.6,
+      reviews: 15,
+      seller: 'MetalWorks CM',
+      location: 'Kribi',
+      inStock: true,
+    },
+    {
+      id: 5,
+      name: 'Biodegradable Bags',
+      category: 'Eco Products',
+      price: 2500,
+      unit: 'per pack (50 pcs)',
+      image: '/trash1.jpg',
+      rating: 4.3,
+      reviews: 20,
+      seller: 'EcoPack Africa',
+      location: 'Douala',
+      inStock: false,
+    },
+    {
+      id: 6,
+      name: 'Glass Cullet',
+      category: 'Glass Recycling',
+      price: 5000,
+      unit: 'per 8kg',
+      image: '/trash1.jpg',
+      rating: 4.1,
+      reviews: 6,
+      seller: 'GlassRecycle CM',
+      location: 'Bafoussam',
+      inStock: true,
+    },
+  ]);
+
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    category: '',
+    price: '',
+    unit: '',
+    location: '',
+  });
 
   const toggleFavorite = (id: number) => {
     setFavorites((prev) =>
@@ -118,6 +144,32 @@ export default function MarketplacePage() {
     const matchesCategory = selectedCategory === 'All Categories' || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const handleAddProduct = () => {
+    if (!newProduct.name || !newProduct.category || !newProduct.price || !newProduct.unit || !newProduct.location) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    const product: Product = {
+      id: products.length + 1,
+      name: newProduct.name,
+      category: newProduct.category,
+      price: parseInt(newProduct.price),
+      unit: newProduct.unit,
+      image: '/trash1.jpg',
+      rating: 5.0,
+      reviews: 0,
+      seller: 'You',
+      location: newProduct.location,
+      inStock: true,
+    };
+
+    setProducts([product, ...products]);
+    setNewProduct({ name: '', category: '', price: '', unit: '', location: '' });
+    setShowAddForm(false);
+    alert('Product listed successfully!');
+  };
 
   return (
     <div className="space-y-8">
@@ -132,12 +184,115 @@ export default function MarketplacePage() {
             <Filter className="h-4 w-4" />
             Filter
           </button>
-          <button className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">
-            <ShoppingBag className="h-4 w-4" />
+          <button 
+            className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+            onClick={() => setShowAddForm(true)}
+          >
+            <Plus className="h-4 w-4" />
             Sell Item
           </button>
         </div>
       </div>
+
+      {/* Add Product Modal */}
+      {showAddForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-md rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-[var(--color-foreground)]">Sell New Item</h2>
+              <button 
+                onClick={() => setShowAddForm(false)}
+                className="p-1 hover:bg-[var(--color-border)] rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">
+                  Product Name
+                </label>
+                <input
+                  type="text"
+                  value={newProduct.name}
+                  onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                  placeholder="Enter product name"
+                  className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">
+                  Category
+                </label>
+                <select
+                  value={newProduct.category}
+                  onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                  className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm"
+                >
+                  <option value="">Select Category</option>
+                  {wasteTypes.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">
+                    Price (XAF)
+                  </label>
+                  <input
+                    type="number"
+                    value={newProduct.price}
+                    onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                    placeholder="Enter price"
+                    className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">
+                    Unit
+                  </label>
+                  <input
+                    type="text"
+                    value={newProduct.unit}
+                    onChange={(e) => setNewProduct({ ...newProduct, unit: e.target.value })}
+                    placeholder="e.g., per kg"
+                    className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">
+                  Location
+                </label>
+                <select
+                  value={newProduct.location}
+                  onChange={(e) => setNewProduct({ ...newProduct, location: e.target.value })}
+                  className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm"
+                >
+                  <option value="">Select Location</option>
+                  {locations.map((loc) => (
+                    <option key={loc} value={loc}>{loc}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <button
+                onClick={handleAddProduct}
+                className="w-full flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+              >
+                <Plus className="h-4 w-4" />
+                List Item
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Search and Categories */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

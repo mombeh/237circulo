@@ -1,47 +1,150 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Trash2,
   Calendar,
-  Filter,
   Download,
   MapPin,
   Clock,
   Truck,
   TrendingUp,
   BarChart3,
+  Filter,
 } from 'lucide-react';
 
+interface CollectionRecord {
+  id: string;
+  zone: string;
+  type: string;
+  amount: string;
+  date: string;
+  status: string;
+}
+
 const zones = [
-  { id: 1, name: 'Douala 1', collections: 156, total: '45.2 tons', efficiency: 94 },
-  { id: 2, name: 'Douala 2', collections: 142, total: '38.7 tons', efficiency: 89 },
-  { id: 3, name: 'Douala 3', collections: 189, total: '52.1 tons', efficiency: 91 },
-  { id: 4, name: 'Douala 4', collections: 134, total: '35.4 tons', efficiency: 87 },
-  { id: 5, name: 'Bonamousadi', collections: 98, total: '28.9 tons', efficiency: 92 },
-  { id: 6, name: 'Akwa', collections: 167, total: '41.3 tons', efficiency: 95 },
+  { id: 1, name: 'Nkolfoulou', collections: 12, total: '45 kg', efficiency: 94 },
+  { id: 2, name: 'Biyem-Assi', collections: 9, total: '32 kg', efficiency: 89 },
+  { id: 3, name: 'Essos', collections: 8, total: '28 kg', efficiency: 91 },
+  { id: 4, name: 'Mvan', collections: 6, total: '18 kg', efficiency: 87 },
+  { id: 5, name: 'Bastos', collections: 4, total: '12 kg', efficiency: 92 },
+  { id: 6, name: 'Akwa', collections: 5, total: '15 kg', efficiency: 95 },
 ];
 
-const weeklyData = [
-  { day: 'Mon', organic: 12, recyclable: 8, hazardous: 2, general: 6 },
-  { day: 'Tue', organic: 15, recyclable: 10, hazardous: 1, general: 5 },
-  { day: 'Wed', organic: 18, recyclable: 12, hazardous: 3, general: 7 },
-  { day: 'Thu', organic: 14, recyclable: 9, hazardous: 2, general: 6 },
-  { day: 'Fri', organic: 20, recyclable: 14, hazardous: 2, general: 8 },
-  { day: 'Sat', organic: 16, recyclable: 11, hazardous: 1, general: 5 },
-  { day: 'Sun', organic: 10, recyclable: 6, hazardous: 1, general: 4 },
-];
-
-const collectionHistory = [
-  { id: 'COL-001', zone: 'Douala 1', type: 'General', amount: '3.2 tons', date: '2024-01-15', status: 'Completed' },
-  { id: 'COL-002', zone: 'Douala 3', type: 'Organic', amount: '4.1 tons', date: '2024-01-15', status: 'Completed' },
-  { id: 'COL-003', zone: 'Akwa', type: 'Recyclable', amount: '2.8 tons', date: '2024-01-14', status: 'Completed' },
-  { id: 'COL-004', zone: 'Bonamousadi', type: 'General', amount: '2.5 tons', date: '2024-01-14', status: 'Pending' },
-  { id: 'COL-005', zone: 'Douala 2', type: 'Hazardous', amount: '0.8 tons', date: '2024-01-13', status: 'Completed' },
-];
+// Data for different time periods
+const periodData: Record<string, { 
+  weeklyData: Array<{day: string; organic: number; recyclable: number; hazardous: number; general: number}>;
+  history: CollectionRecord[];
+  stats: { total: number; collections: number; time: number; efficiency: number };
+}> = {
+  '7days': {
+    weeklyData: [
+      { day: 'Mon', organic: 8, recyclable: 5, hazardous: 1, general: 3 },
+      { day: 'Tue', organic: 10, recyclable: 6, hazardous: 0, general: 2 },
+      { day: 'Wed', organic: 12, recyclable: 7, hazardous: 1, general: 4 },
+      { day: 'Thu', organic: 9, recyclable: 5, hazardous: 1, general: 3 },
+      { day: 'Fri', organic: 11, recyclable: 8, hazardous: 1, general: 5 },
+      { day: 'Sat', organic: 8, recyclable: 6, hazardous: 0, general: 2 },
+      { day: 'Sun', organic: 5, recyclable: 3, hazardous: 0, general: 2 },
+    ],
+    history: [
+      { id: 'COL-001', zone: 'Nkolfoulou', type: 'General', amount: '12 kg', date: '2026-02-22', status: 'Completed' },
+      { id: 'COL-002', zone: 'Biyem-Assi', type: 'Organic', amount: '15 kg', date: '2026-02-22', status: 'Completed' },
+      { id: 'COL-003', zone: 'Essos', type: 'Recyclable', amount: '8 kg', date: '2026-02-21', status: 'Completed' },
+      { id: 'COL-004', zone: 'Mvan', type: 'General', amount: '6 kg', date: '2026-02-21', status: 'Pending' },
+      { id: 'COL-005', zone: 'Bastos', type: 'E-waste', amount: '3 kg', date: '2026-02-20', status: 'Completed' },
+      { id: 'COL-006', zone: 'Akwa', type: 'Organic', amount: '10 kg', date: '2026-02-19', status: 'Completed' },
+      { id: 'COL-007', zone: 'Nkolfoulou', type: 'Recyclable', amount: '7 kg', date: '2026-02-18', status: 'Completed' },
+    ],
+    stats: { total: 127, collections: 44, time: 38, efficiency: 91.2 },
+  },
+  '30days': {
+    weeklyData: [
+      { day: 'Week 1', organic: 58, recyclable: 40, hazardous: 5, general: 22 },
+      { day: 'Week 2', organic: 65, recyclable: 45, hazardous: 6, general: 25 },
+      { day: 'Week 3', organic: 52, recyclable: 38, hazardous: 4, general: 20 },
+      { day: 'Week 4', organic: 48, recyclable: 35, hazardous: 5, general: 18 },
+    ],
+    history: [
+      { id: 'COL-001', zone: 'Nkolfoulou', type: 'General', amount: '12 kg', date: '2026-02-22', status: 'Completed' },
+      { id: 'COL-002', zone: 'Biyem-Assi', type: 'Organic', amount: '15 kg', date: '2026-02-22', status: 'Completed' },
+      { id: 'COL-008', zone: 'Biyem-Assi', type: 'General', amount: '5 kg', date: '2026-02-15', status: 'Completed' },
+      { id: 'COL-009', zone: 'Essos', type: 'Hazardous', amount: '2 kg', date: '2026-02-10', status: 'Completed' },
+      { id: 'COL-010', zone: 'Mvan', type: 'Organic', amount: '9 kg', date: '2026-02-05', status: 'Completed' },
+      { id: 'COL-011', zone: 'Bastos', type: 'Recyclable', amount: '4 kg', date: '2026-01-28', status: 'Completed' },
+      { id: 'COL-012', zone: 'Akwa', type: 'General', amount: '8 kg', date: '2026-01-20', status: 'Completed' },
+      { id: 'COL-013', zone: 'Nkolfoulou', type: 'Organic', amount: '14 kg', date: '2026-01-15', status: 'Completed' },
+      { id: 'COL-014', zone: 'Essos', type: 'Recyclable', amount: '11 kg', date: '2026-01-10', status: 'Completed' },
+      { id: 'COL-015', zone: 'Biyem-Assi', type: 'E-waste', amount: '6 kg', date: '2026-01-05', status: 'Completed' },
+    ],
+    stats: { total: 485, collections: 156, time: 42, efficiency: 88.5 },
+  },
+  '90days': {
+    weeklyData: [
+      { day: 'Jan', organic: 180, recyclable: 130, hazardous: 18, general: 75 },
+      { day: 'Feb', organic: 165, recyclable: 120, hazardous: 15, general: 68 },
+      { day: 'Mar', organic: 195, recyclable: 145, hazardous: 20, general: 82 },
+    ],
+    history: [
+      { id: 'COL-001', zone: 'Nkolfoulou', type: 'General', amount: '12 kg', date: '2026-02-22', status: 'Completed' },
+      { id: 'COL-002', zone: 'Biyem-Assi', type: 'Organic', amount: '15 kg', date: '2026-02-22', status: 'Completed' },
+      { id: 'COL-008', zone: 'Biyem-Assi', type: 'General', amount: '5 kg', date: '2026-02-15', status: 'Completed' },
+      { id: 'COL-009', zone: 'Essos', type: 'Hazardous', amount: '2 kg', date: '2026-02-10', status: 'Completed' },
+      { id: 'COL-010', zone: 'Mvan', type: 'Organic', amount: '9 kg', date: '2026-02-05', status: 'Completed' },
+      { id: 'COL-011', zone: 'Bastos', type: 'Recyclable', amount: '4 kg', date: '2026-01-28', status: 'Completed' },
+      { id: 'COL-012', zone: 'Akwa', type: 'General', amount: '8 kg', date: '2026-01-20', status: 'Completed' },
+      { id: 'COL-013', zone: 'Nkolfoulou', type: 'Organic', amount: '14 kg', date: '2026-01-15', status: 'Completed' },
+      { id: 'COL-014', zone: 'Essos', type: 'Recyclable', amount: '11 kg', date: '2026-01-10', status: 'Completed' },
+      { id: 'COL-015', zone: 'Biyem-Assi', type: 'E-waste', amount: '6 kg', date: '2026-01-05', status: 'Completed' },
+      { id: 'COL-016', zone: 'Mvan', type: 'General', amount: '7 kg', date: '2025-12-28', status: 'Completed' },
+      { id: 'COL-017', zone: 'Bastos', type: 'Organic', amount: '12 kg', date: '2025-12-20', status: 'Completed' },
+      { id: 'COL-018', zone: 'Akwa', type: 'Recyclable', amount: '9 kg', date: '2025-12-15', status: 'Completed' },
+      { id: 'COL-019', zone: 'Nkolfoulou', type: 'Hazardous', amount: '3 kg', date: '2025-12-10', status: 'Completed' },
+      { id: 'COL-020', zone: 'Essos', type: 'General', amount: '10 kg', date: '2025-12-05', status: 'Completed' },
+    ],
+    stats: { total: 1245, collections: 412, time: 45, efficiency: 85.2 },
+  },
+  'year': {
+    weeklyData: [
+      { day: 'Q1', organic: 680, recyclable: 490, hazardous: 65, general: 290 },
+      { day: 'Q2', organic: 720, recyclable: 520, hazardous: 70, general: 310 },
+      { day: 'Q3', organic: 650, recyclable: 480, hazardous: 58, general: 275 },
+      { day: 'Q4', organic: 710, recyclable: 510, hazardous: 62, general: 295 },
+    ],
+    history: [
+      { id: 'COL-001', zone: 'Nkolfoulou', type: 'General', amount: '12 kg', date: '2026-02-22', status: 'Completed' },
+      { id: 'COL-002', zone: 'Biyem-Assi', type: 'Organic', amount: '15 kg', date: '2026-02-22', status: 'Completed' },
+      { id: 'COL-008', zone: 'Biyem-Assi', type: 'General', amount: '5 kg', date: '2026-02-15', status: 'Completed' },
+      { id: 'COL-009', zone: 'Essos', type: 'Hazardous', amount: '2 kg', date: '2026-02-10', status: 'Completed' },
+      { id: 'COL-010', zone: 'Mvan', type: 'Organic', amount: '9 kg', date: '2026-02-05', status: 'Completed' },
+      { id: 'COL-011', zone: 'Bastos', type: 'Recyclable', amount: '4 kg', date: '2026-01-28', status: 'Completed' },
+      { id: 'COL-012', zone: 'Akwa', type: 'General', amount: '8 kg', date: '2026-01-20', status: 'Completed' },
+      { id: 'COL-013', zone: 'Nkolfoulou', type: 'Organic', amount: '14 kg', date: '2026-01-15', status: 'Completed' },
+      { id: 'COL-014', zone: 'Essos', type: 'Recyclable', amount: '11 kg', date: '2026-01-10', status: 'Completed' },
+      { id: 'COL-015', zone: 'Biyem-Assi', type: 'E-waste', amount: '6 kg', date: '2026-01-05', status: 'Completed' },
+      { id: 'COL-016', zone: 'Mvan', type: 'General', amount: '7 kg', date: '2025-12-28', status: 'Completed' },
+      { id: 'COL-017', zone: 'Bastos', type: 'Organic', amount: '12 kg', date: '2025-12-20', status: 'Completed' },
+      { id: 'COL-018', zone: 'Akwa', type: 'Recyclable', amount: '9 kg', date: '2025-12-15', status: 'Completed' },
+      { id: 'COL-019', zone: 'Nkolfoulou', type: 'Hazardous', amount: '3 kg', date: '2025-12-10', status: 'Completed' },
+      { id: 'COL-020', zone: 'Essos', type: 'General', amount: '10 kg', date: '2025-12-05', status: 'Completed' },
+      { id: 'COL-021', zone: 'Biyem-Assi', type: 'Organic', amount: '18 kg', date: '2025-11-28', status: 'Completed' },
+      { id: 'COL-022', zone: 'Mvan', type: 'Recyclable', amount: '14 kg', date: '2025-11-20', status: 'Completed' },
+      { id: 'COL-023', zone: 'Bastos', type: 'General', amount: '8 kg', date: '2025-11-15', status: 'Completed' },
+      { id: 'COL-024', zone: 'Akwa', type: 'E-waste', amount: '5 kg', date: '2025-11-10', status: 'Completed' },
+      { id: 'COL-025', zone: 'Nkolfoulou', type: 'Organic', amount: '20 kg', date: '2025-11-05', status: 'Completed' },
+    ],
+    stats: { total: 4250, collections: 1450, time: 52, efficiency: 82.1 },
+  },
+};
 
 export default function CollectionPage() {
   const [dateRange, setDateRange] = useState('7days');
+  
+  const currentData = useMemo(() => periodData[dateRange], [dateRange]);
+
+  const handleDateRangeChange = (value: string) => {
+    setDateRange(value);
+  };
 
   return (
     <div className="space-y-8">
@@ -69,7 +172,7 @@ export default function CollectionPage() {
           <Calendar className="h-4 w-4 text-[var(--color-text-dim)]" />
           <select
             value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
+            onChange={(e) => handleDateRangeChange(e.target.value)}
             className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm"
           >
             <option value="7days">Last 7 days</option>
@@ -80,7 +183,7 @@ export default function CollectionPage() {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats - These change based on date range */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
           <div className="flex items-center gap-3">
@@ -89,8 +192,8 @@ export default function CollectionPage() {
             </div>
             <span className="text-sm text-[var(--color-text-dim)]">Total Collected</span>
           </div>
-          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">241.6 tons</p>
-          <p className="text-sm text-green-500">+15.3% from last month</p>
+          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">{currentData.stats.total} kg</p>
+          <p className="text-sm text-green-500">+15.3% from yesterday</p>
         </div>
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
           <div className="flex items-center gap-3">
@@ -99,8 +202,8 @@ export default function CollectionPage() {
             </div>
             <span className="text-sm text-[var(--color-text-dim)]">Collections</span>
           </div>
-          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">886</p>
-          <p className="text-sm text-green-500">+8.7% from last month</p>
+          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">{currentData.stats.collections}</p>
+          <p className="text-sm text-green-500">+8.7% from yesterday</p>
         </div>
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
           <div className="flex items-center gap-3">
@@ -109,8 +212,8 @@ export default function CollectionPage() {
             </div>
             <span className="text-sm text-[var(--color-text-dim)]">Avg. Collection Time</span>
           </div>
-          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">42 min</p>
-          <p className="text-sm text-green-500">-5 min from last month</p>
+          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">{currentData.stats.time} min</p>
+          <p className="text-sm text-green-500">-5 min from yesterday</p>
         </div>
         <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
           <div className="flex items-center gap-3">
@@ -119,43 +222,43 @@ export default function CollectionPage() {
             </div>
             <span className="text-sm text-[var(--color-text-dim)]">Efficiency Rate</span>
           </div>
-          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">91.2%</p>
-          <p className="text-sm text-green-500">+3.1% from last month</p>
+          <p className="mt-3 text-2xl font-bold text-[var(--color-foreground)]">{currentData.stats.efficiency}%</p>
+          <p className="text-sm text-green-500">+3.1% from yesterday</p>
         </div>
       </div>
 
-      {/* Weekly chart */}
+      {/* Weekly chart - Changes based on date range */}
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--color-foreground)]">Weekly Collection</h2>
-            <p className="text-sm text-[var(--color-text-dim)]">Waste collected by day (tons)</p>
+            <h2 className="text-lg font-semibold text-[var(--color-foreground)]">Collection Overview</h2>
+            <p className="text-sm text-[var(--color-text-dim)]">Waste collected by period (kg)</p>
           </div>
           <BarChart3 className="h-5 w-5 text-[var(--color-text-dim)]" />
         </div>
         <div className="mt-6 flex items-end justify-between gap-2">
-          {weeklyData.map((day) => (
+          {currentData.weeklyData.map((day) => (
             <div key={day.day} className="flex flex-col items-center gap-2">
               <div className="flex w-full items-end gap-1">
                 <div
                   className="flex-1 rounded bg-green-500"
-                  style={{ height: `${(day.organic / 20) * 100}%` }}
-                  title={`Organic: ${day.organic}t`}
+                  style={{ height: `${(day.organic / 250) * 100}%` }}
+                  title={`Organic: ${day.organic}kg`}
                 />
                 <div
                   className="flex-1 rounded bg-blue-500"
-                  style={{ height: `${(day.recyclable / 20) * 100}%` }}
-                  title={`Recyclable: ${day.recyclable}t`}
+                  style={{ height: `${(day.recyclable / 250) * 100}%` }}
+                  title={`Recyclable: ${day.recyclable}kg`}
                 />
                 <div
                   className="flex-1 rounded bg-red-500"
-                  style={{ height: `${(day.hazardous / 20) * 100}%` }}
-                  title={`Hazardous: ${day.hazardous}t`}
+                  style={{ height: `${(day.hazardous / 250) * 100}%` }}
+                  title={`Hazardous: ${day.hazardous}kg`}
                 />
                 <div
                   className="flex-1 rounded bg-gray-400"
-                  style={{ height: `${(day.general / 20) * 100}%` }}
-                  title={`General: ${day.general}t`}
+                  style={{ height: `${(day.general / 250) * 100}%` }}
+                  title={`General: ${day.general}kg`}
                 />
               </div>
               <span className="text-xs text-[var(--color-text-dim)]">{day.day}</span>
@@ -182,7 +285,7 @@ export default function CollectionPage() {
         </div>
       </div>
 
-      {/* Zone breakdown */}
+      {/* Zone breakdown - Updates based on date range */}
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
         <h2 className="text-lg font-semibold text-[var(--color-foreground)]">Zone Breakdown</h2>
         <p className="text-sm text-[var(--color-text-dim)]">Performance by collection zone</p>
@@ -220,7 +323,7 @@ export default function CollectionPage() {
                     </div>
                   </td>
                   <td className="py-4 text-right">
-                    <button className="text-sm text-green-600 hover:text-green-700">View Details</button>
+                    <button className="text-sm text-green-600 hover:text-green-700" onClick={() => window.location.href = '/dashboard/insights'}>View Details</button>
                   </td>
                 </tr>
               ))}
@@ -229,12 +332,12 @@ export default function CollectionPage() {
         </div>
       </div>
 
-      {/* Recent history */}
+      {/* Collection History - Updates based on date range */}
       <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-6">
         <h2 className="text-lg font-semibold text-[var(--color-foreground)]">Collection History</h2>
         <p className="text-sm text-[var(--color-text-dim)]">Recent collection records</p>
         <div className="mt-6 space-y-3">
-          {collectionHistory.map((record) => (
+          {currentData.history.map((record) => (
             <div
               key={record.id}
               className="flex items-center justify-between rounded-lg bg-[var(--color-background)] p-4"

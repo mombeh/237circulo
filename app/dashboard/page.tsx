@@ -3,7 +3,6 @@
 import {
   Trash2,
   Recycle,
-  Truck,
   TrendingUp,
   TrendingDown,
   Zap,
@@ -21,7 +20,7 @@ import {
 const stats = [
   {
     name: 'Total Waste Collected',
-    value: '2,847',
+    value: '127',
     unit: 'kg',
     change: '+12.5%',
     changeType: 'positive',
@@ -30,25 +29,25 @@ const stats = [
   },
   {
     name: 'Green Points Earned',
-    value: '12,450',
+    value: '450',
     unit: 'pts',
-    change: '+850',
+    change: '+85',
     changeType: 'positive',
     icon: Coins,
     color: 'bg-yellow-500',
   },
   {
     name: 'Active Collectors',
-    value: '24',
+    value: '3',
     unit: 'collectors',
-    change: '+2',
+    change: '+1',
     changeType: 'positive',
     icon: Users,
     color: 'bg-purple-500',
   },
   {
     name: 'AI Predictions',
-    value: '94.2',
+    value: '82.4',
     unit: '% accuracy',
     change: '-1.3%',
     changeType: 'negative',
@@ -58,11 +57,11 @@ const stats = [
 ];
 
 const recentListings = [
-  { zone: 'Nkolfoulou', waste: '15kg Plastics', price: 'FCFA 2,500', status: 'Available', time: '2 hours ago' },
-  { zone: 'Biyem-Assi', waste: '8kg E-waste', price: 'FCFA 5,200', status: 'Matched', time: '1 hour ago' },
-  { zone: 'Essos', waste: '25kg Organic', price: 'FCFA 1,000', status: 'Available', time: '3 hours ago' },
-  { zone: 'Mvan', waste: '12kg Metals', price: 'FCFA 3,800', status: 'Collected', time: '4 hours ago' },
-  { zone: 'Bastos', waste: '5kg Glass', price: 'FCFA 1,200', status: 'Available', time: '5 hours ago' },
+  { zone: 'Nkolfoulou', waste: '5kg Plastics', price: 'FCFA 1,500', status: 'Available', time: '10 min ago' },
+  { zone: 'Biyem-Assi', waste: '3kg E-waste', price: 'FCFA 2,200', status: 'Matched', time: '25 min ago' },
+  { zone: 'Essos', waste: '8kg Organic', price: 'FCFA 500', status: 'Available', time: '1 hour ago' },
+  { zone: 'Mvan', waste: '4kg Metals', price: 'FCFA 1,800', status: 'Collected', time: '2 hours ago' },
+  { zone: 'Bastos', waste: '2kg Glass', price: 'FCFA 600', status: 'Available', time: '3 hours ago' },
 ];
 
 const wasteTypes = [
@@ -74,24 +73,24 @@ const wasteTypes = [
 ];
 
 const impactMetrics = [
-  { label: 'Waste Diverted', value: '2.8 tonnes', icon: Trash2, color: 'text-blue-500' },
-  { label: 'Economic Value', value: 'FCFA 1.2M', icon: Coins, color: 'text-yellow-500' },
-  { label: 'CO₂ Saved', value: '4.2 tonnes', icon: Leaf, color: 'text-green-500' },
-  { label: 'Water Saved', value: '12,500 L', icon: Droplets, color: 'text-cyan-500' },
+  { label: 'Waste Diverted', value: '127 kg', icon: Trash2, color: 'text-blue-500' },
+  { label: 'Economic Value', value: 'FCFA 45,000', icon: Coins, color: 'text-yellow-500' },
+  { label: 'CO₂ Saved', value: '42 kg', icon: Leaf, color: 'text-green-500' },
+  { label: 'Water Saved', value: '250 L', icon: Droplets, color: 'text-cyan-500' },
 ];
 
 const leaderboard = [
-  { rank: 1, quartier: 'Nkolfoulou', points: 15420, collections: 245 },
-  { rank: 2, quartier: 'Biyem-Assi', points: 12850, collections: 198 },
-  { rank: 3, quartier: 'Essos', points: 11200, collections: 167 },
-  { rank: 4, quartier: 'Mvan', points: 9800, collections: 142 },
-  { rank: 5, quartier: 'Bastos', points: 8450, collections: 118 },
+  { rank: 1, quartier: 'Nkolfoulou', points: 450, collections: 12 },
+  { rank: 2, quartier: 'Biyem-Assi', points: 380, collections: 9 },
+  { rank: 3, quartier: 'Essos', points: 320, collections: 7 },
+  { rank: 4, quartier: 'Mvan', points: 280, collections: 5 },
+  { rank: 5, quartier: 'Bastos', points: 210, collections: 4 },
 ];
 
 const alerts = [
-  { type: 'warning', message: 'New listing match found in Nkolfoulou - 15kg plastics', time: '10 min ago' },
-  { type: 'success', message: 'You earned 150 green points!', time: '1 hour ago' },
-  { type: 'info', message: 'Price update: E-waste demand increased by 15%', time: '3 hours ago' },
+  { type: 'warning', message: 'New listing match found in Nkolfoulou - 5kg plastics', time: '2 min ago' },
+  { type: 'success', message: 'You earned 50 green points!', time: '15 min ago' },
+  { type: 'info', message: 'Price update: E-waste demand increased by 10%', time: '1 hour ago' },
 ];
 
 export default function DashboardPage() {
@@ -105,7 +104,7 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-2">
           <Coins className="h-5 w-5 text-yellow-500" />
-          <span className="font-bold text-[var(--color-foreground)]">12,450</span>
+          <span className="font-bold text-[var(--color-foreground)]">450</span>
           <span className="text-sm text-[var(--color-text-dim)]">Green Points</span>
         </div>
       </div>
@@ -154,7 +153,7 @@ export default function DashboardPage() {
             <h2 className="text-lg font-semibold text-[var(--color-foreground)]">Your Impact</h2>
             <p className="text-sm text-[var(--color-text-dim)]">Environmental and economic contribution</p>
           </div>
-          <button className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700">
+          <button className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700" onClick={() => window.location.href = '/dashboard/collection'}>
             View Details <ArrowRight className="h-4 w-4" />
           </button>
         </div>
@@ -210,7 +209,7 @@ export default function DashboardPage() {
               <h2 className="text-lg font-semibold text-[var(--color-foreground)]">Recent Listings</h2>
               <p className="text-sm text-[var(--color-text-dim)]">Marketplace activity</p>
             </div>
-            <button className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700">
+            <button className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700" onClick={() => window.location.href = '/dashboard/marketplace'}>
               View All <ArrowRight className="h-4 w-4" />
             </button>
           </div>
