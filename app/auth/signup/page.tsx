@@ -73,11 +73,24 @@ export default function SignUpPage() {
         href="/"
         className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm text-[var(--text-dim)] hover:text-green-primary transition"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-          <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L4.414 9H18a1 1 0 110 2H4.414l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-4 w-4"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden
+        >
+          <path
+            fillRule="evenodd"
+            d="M7.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L4.414 9H18a1 1 0 110 2H4.414l3.293 3.293a1 1 0 010 1.414z"
+            clipRule="evenodd"
+          />
         </svg>
         <span>Back</span>
-        <span className="ml-1 inline-block w-2 h-2 rounded-full bg-green-primary animate-pulse" aria-hidden />
+        <span
+          className="ml-1 inline-block w-2 h-2 rounded-full bg-green-primary animate-pulse"
+          aria-hidden
+        />
       </Link>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-green-primary/10 dark:bg-green-primary/5 blur-[100px] rounded-full pointer-events-none" />
 
@@ -97,7 +110,9 @@ export default function SignUpPage() {
             <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-2xl z-50">
               <div className="flex flex-col items-center justify-center">
                 <div className="w-12 h-12 border-4 border-green-primary border-t-transparent rounded-full animate-spin"></div>
-                <p className="mt-4 text-white font-medium">Creating account...</p>
+                <p className="mt-4 text-white font-medium">
+                  Creating account...
+                </p>
               </div>
             </div>
           )}
@@ -109,131 +124,132 @@ export default function SignUpPage() {
               Enter your information to get started.
             </p>
 
-              <form onSubmit={handleSignup} className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Jane Doe"
-                    className="w-full bg-white border border-[var(--color-border)] 
-rounded-xl px-4 py-3 outline-none 
-text-black placeholder:text-gray-700
+            <form onSubmit={handleSignup} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Jane Doe"
+                  className="w-full bg-white border border-[var(--color-border)] 
+ rounded-xl px-4 py-3 outline-none 
+ text-[var(--color-foreground)] placeholder:text-[var(--color-text-dim)]
 focus:ring-2 focus:ring-green-primary/20 
 focus:border-green-primary transition-all"
-                  />
-                </div>
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@company.com"
-                    className="w-full bg-white border border-[var(--color-border)] 
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                  Email Address
+                </label>
+                <input
+  type="email"
+  required
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  placeholder="name@company.com"
+  className={`w-full bg-white border border-[var(--color-border)]
+  rounded-xl px-4 py-3 outline-none
+  ${email ? 'text-black' : 'text-gray-400'}
+  placeholder:text-gray-400
+  focus:ring-2 focus:ring-green-primary/20
+  focus:border-green-primary transition-all`}
+/>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-[var(--card)] border border-[var(--color-border)]
+  rounded-xl px-4 py-3 outline-none
+  text-[var(--color-foreground)] placeholder:text-[var(--color-text-dim)]
+  focus:ring-2 focus:ring-green-primary/20
+  focus:border-green-primary transition-all"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                  Town
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={town}
+                  onChange={(e) => setTown(e.target.value)}
+                  placeholder="Douala"
+                  className="w-full bg-white border border-[var(--color-border)] 
              rounded-xl px-4 py-3 outline-none 
-             text-black placeholder:text-gray-400
+             text-[var(--color-foreground)] placeholder:text-[var(--color-text-dim)]
              focus:ring-2 focus:ring-green-primary/20 
              focus:border-green-primary transition-all"
-                  />
-                </div>
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full bg-white border border-[var(--color-border)] 
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                  Neighborhood (Quartier)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={quartier}
+                  onChange={(e) => setQuartier(e.target.value)}
+                  placeholder="Bonamoussadi"
+                  className="w-full bg-white border border-[var(--color-border)] 
              rounded-xl px-4 py-3 outline-none 
-             text-black placeholder:text-gray-400
+             text-[var(--color-foreground)] placeholder:text-[var(--color-text-dim)]
              focus:ring-2 focus:ring-green-primary/20 
              focus:border-green-primary transition-all"
-                  />
-                </div>
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
-                    Town
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={town}
-                    onChange={(e) => setTown(e.target.value)}
-                    placeholder="Douala"
-                    className="w-full bg-white border border-[var(--color-border)] 
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                  Language Preference
+                </label>
+                <select
+                  required
+                  value={prefLang}
+                  onChange={(e) => setPrefLang(e.target.value)}
+                  className="w-full bg-white border border-[var(--color-border)] 
              rounded-xl px-4 py-3 outline-none 
-             text-black placeholder:text-gray-400
+             text-[var(--color-foreground)]
              focus:ring-2 focus:ring-green-primary/20 
              focus:border-green-primary transition-all"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
-                    Neighborhood (Quartier)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={quartier}
-                    onChange={(e) => setQuartier(e.target.value)}
-                    placeholder="Bonamoussadi"
-                    className="w-full bg-white border border-[var(--color-border)] 
-             rounded-xl px-4 py-3 outline-none 
-             text-black placeholder:text-gray-400
-             focus:ring-2 focus:ring-green-primary/20 
-             focus:border-green-primary transition-all"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
-                    Language Preference
-                  </label>
-                  <select
-                    required
-                    value={prefLang}
-                    onChange={(e) => setPrefLang(e.target.value)}
-                    className="w-full bg-white border border-[var(--color-border)] 
-             rounded-xl px-4 py-3 outline-none 
-             text-black
-             focus:ring-2 focus:ring-green-primary/20 
-             focus:border-green-primary transition-all"
-                  >
-                    <option value="English">English</option>
-                    <option value="French">French</option>
-                    <option value="Pidgin">Pidgin</option>
-                  </select>
-                </div>
-
-                {error && (
-                  <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-                    {error}
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-green-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-50"
                 >
-                  {loading ? 'Creating...' : 'Sign Up'}
-                </button>
-                <div className="relative my-6">
+                  <option value="English">English</option>
+                  <option value="French">French</option>
+                  <option value="Pidgin">Pidgin</option>
+                </select>
+              </div>
+
+              {error && (
+                <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-green-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-50"
+              >
+                {loading ? 'Creating...' : 'Sign Up'}
+              </button>
+              <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-[var(--color-border)]"></div>
                 </div>
@@ -243,7 +259,7 @@ focus:border-green-primary transition-all"
                   </span>
                 </div>
               </div>
-                {/* Google Sign Up Button */}
+              {/* Google Sign Up Button */}
               <button
                 onClick={handleGoogleSignUp}
                 className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-xl transition-all shadow-sm mb-4"
@@ -268,13 +284,16 @@ focus:border-green-primary transition-all"
                 </svg>
                 Continue with Google
               </button>
-              </form>
-              <p className="mt-4 text-center text-sm text-[var(--color-text-dim)]">
-                <span>Already have an account? </span>
-                <Link href="/auth" className="font-bold text-green-primary hover:underline">
-                  Sign in
-                </Link>
-              </p>
+            </form>
+            <p className="mt-4 text-center text-sm text-[var(--color-text-dim)]">
+              <span>Already have an account? </span>
+              <Link
+                href="/auth"
+                className="font-bold text-green-primary hover:underline"
+              >
+                Sign in
+              </Link>
+            </p>
           </div>
         </div>
 
