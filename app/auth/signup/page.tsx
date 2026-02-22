@@ -2,22 +2,60 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function SignUpPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
-  const [isSent, setIsSent] = useState(false)
+  const [password, setPassword] = useState('')
+  const [town, setTown] = useState('')
+  const [quartier, setQuartier] = useState('')
+  const [prefLang, setPrefLang] = useState('English')
+  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const handleGoogleSignUp = () => {
+    // Redirect to backend Google OAuth endpoint
+    window.location.href = 'http://localhost:3000/api/auth/google'
+  }
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
     setLoading(true)
 
-    // simulate network request
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          point_balance: 0,
+          pref_lang: prefLang,
+          quartier,
+          town,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.message || 'Registration failed. Please try again.')
+        setLoading(false)
+        return
+      }
+
       setLoading(false)
-      setIsSent(true)
-    }, 1500)
+      router.push('/dashboard')
+    } catch {
+      setError('An error occurred. Please try again.')
+      setLoading(false)
+    }
   }
 
   return (
@@ -45,19 +83,26 @@ export default function SignUpPage() {
           </Link>
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--border)] p-8 rounded-2xl shadow-xl">
-          {!isSent ? (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h1 className="font-syne text-2xl text-gray-700 font-bold mb-2">
-                Create your account
-              </h1>
-              <p className="text-[var(--text-dim)] text-sm mb-8">
-                Enter your information to get started.
-              </p>
+        <div className="bg-[var(--color-card)] border border-[var(--color-border)] p-8 rounded-2xl shadow-xl relative">
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-2xl z-50">
+              <div className="flex flex-col items-center justify-center">
+                <div className="w-12 h-12 border-4 border-green-primary border-t-transparent rounded-full animate-spin"></div>
+                <p className="mt-4 text-white font-medium">Creating account...</p>
+              </div>
+            </div>
+          )}
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h1 className="font-syne text-2xl text-[var(--color-foreground)] font-bold mb-2">
+              Create your account
+            </h1>
+            <p className="text-[var(--color-text-dim)] text-sm mb-8">
+              Enter your information to get started.
+            </p>
 
-              <form onSubmit={handleSignup} className="space-y-6">
+              <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-dim)]">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
                     Full Name
                   </label>
                   <input
@@ -66,16 +111,16 @@ export default function SignUpPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Jane Doe"
-                    className="w-full bg-[var(--background)] border border-[var(--border)] 
-             rounded-xl px-4 py-3 outline-none 
-             text-black placeholder:text-gray-400
-             focus:ring-2 focus:ring-green-primary/20 
-             focus:border-green-primary transition-all"
+                    className="w-full bg-white border border-[var(--color-border)] 
+rounded-xl px-4 py-3 outline-none 
+text-black placeholder:text-gray-700
+focus:ring-2 focus:ring-green-primary/20 
+focus:border-green-primary transition-all"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-dim)]">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
                     Email Address
                   </label>
                   <input
@@ -84,13 +129,93 @@ export default function SignUpPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@company.com"
-                    className="w-full bg-[var(--background)] border border-[var(--border)] 
+                    className="w-full bg-white border border-[var(--color-border)] 
              rounded-xl px-4 py-3 outline-none 
              text-black placeholder:text-gray-400
              focus:ring-2 focus:ring-green-primary/20 
              focus:border-green-primary transition-all"
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-white border border-[var(--color-border)] 
+             rounded-xl px-4 py-3 outline-none 
+             text-black placeholder:text-gray-400
+             focus:ring-2 focus:ring-green-primary/20 
+             focus:border-green-primary transition-all"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                    Town
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={town}
+                    onChange={(e) => setTown(e.target.value)}
+                    placeholder="Douala"
+                    className="w-full bg-white border border-[var(--color-border)] 
+             rounded-xl px-4 py-3 outline-none 
+             text-black placeholder:text-gray-400
+             focus:ring-2 focus:ring-green-primary/20 
+             focus:border-green-primary transition-all"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                    Neighborhood (Quartier)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={quartier}
+                    onChange={(e) => setQuartier(e.target.value)}
+                    placeholder="Bonamoussadi"
+                    className="w-full bg-white border border-[var(--color-border)] 
+             rounded-xl px-4 py-3 outline-none 
+             text-black placeholder:text-gray-400
+             focus:ring-2 focus:ring-green-primary/20 
+             focus:border-green-primary transition-all"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                    Language Preference
+                  </label>
+                  <select
+                    required
+                    value={prefLang}
+                    onChange={(e) => setPrefLang(e.target.value)}
+                    className="w-full bg-white border border-[var(--color-border)] 
+             rounded-xl px-4 py-3 outline-none 
+             text-black
+             focus:ring-2 focus:ring-green-primary/20 
+             focus:border-green-primary transition-all"
+                  >
+                    <option value="English">English</option>
+                    <option value="French">French</option>
+                    <option value="Pidgin">Pidgin</option>
+                  </select>
+                </div>
+
+                {error && (
+                  <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+                    {error}
+                  </div>
+                )}
 
                 <button
                   type="submit"
@@ -99,34 +224,53 @@ export default function SignUpPage() {
                 >
                   {loading ? 'Creating...' : 'Sign Up'}
                 </button>
-              </form>
-            </div>
-          ) : (
-            <div className="text-center py-4 animate-in zoom-in duration-300">
-              <div className="w-16 h-16 bg-green-500/10 text-green-primary rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-                🎉
+                <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[var(--color-border)]"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-[var(--color-card)] px-2 text-[var(--color-text-dim)]">
+                    Or continue with Google
+                  </span>
+                </div>
               </div>
-              <h2 className="font-syne text-2xl font-bold mb-2">
-                Check your inbox
-              </h2>
-              <p className="text-[var(--text-dim)] text-sm mb-8">
-                We sent a confirmation to <br />
-                <span className="text-[var(--foreground)] font-medium">
-                  {email}
-                </span>
-              </p>
+                {/* Google Sign Up Button */}
               <button
-                onClick={() => setIsSent(false)}
-                className="text-xs font-bold uppercase tracking-widest text-green-primary hover:underline"
+                onClick={handleGoogleSignUp}
+                className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-xl transition-all shadow-sm mb-4"
               >
-                Use a different email
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    fill="#4285F4"
+                  />
+                  <path
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    fill="#34A853"
+                  />
+                  <path
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                    fill="#FBBC05"
+                  />
+                  <path
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    fill="#EA4335"
+                  />
+                </svg>
+                Continue with Google
               </button>
-            </div>
-          )}
+              </form>
+              <p className="mt-4 text-center text-sm text-[var(--color-text-dim)]">
+                <span>Already have an account? </span>
+                <Link href="/auth" className="font-bold text-green-primary hover:underline">
+                  Sign in
+                </Link>
+              </p>
+          </div>
         </div>
 
-        <p className="text-center mt-8 text-[10px] text-[var(--text-dim)] uppercase tracking-widest">
-          No password required • Secure Connection
+        <p className="text-center mt-8 text-[10px] text-[var(--color-text-dim)] uppercase tracking-widest">
+          Secure Connection
         </p>
       </div>
     </div>
