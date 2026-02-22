@@ -1,28 +1,54 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function AuthPage() {
-  const [email, setEmail] = useState('');
-  const [isSent, setIsSent] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleGoogleLogin = () => {
     // Redirect to backend Google OAuth endpoint
     // Update this to your NestJS backend URL
-    window.location.href = 'http://localhost:3000/api/auth/google';
-  };
+    window.location.href = 'http://localhost:3000/api/auth/google'
+  }
 
   const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
-    setTimeout(() => {
-      setLoading(false);
-      setIsSent(true);
-    }, 1500);
-  };
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.message || 'Login failed. Please try again.')
+        setLoading(false)
+        return
+      }
+
+      setLoading(false)
+      router.push('/dashboard')
+    } catch {
+      setError('An error occurred. Please try again.')
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 relative">
@@ -30,11 +56,24 @@ export default function AuthPage() {
         href="/"
         className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm text-[var(--color-text-dim)] hover:text-green-primary transition"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-          <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L4.414 9H18a1 1 0 110 2H4.414l3.293 3.293a1 1 0 010 1.414z" clipRule="evenodd" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-4 w-4"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden
+        >
+          <path
+            fillRule="evenodd"
+            d="M7.707 14.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L4.414 9H18a1 1 0 110 2H4.414l3.293 3.293a1 1 0 010 1.414z"
+            clipRule="evenodd"
+          />
         </svg>
         <span>Back</span>
-        <span className="ml-1 inline-block w-2 h-2 rounded-full bg-green-primary animate-pulse" aria-hidden />
+        <span
+          className="ml-1 inline-block w-2 h-2 rounded-full bg-green-primary animate-pulse"
+          aria-hidden
+        />
       </Link>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-green-primary/10 dark:bg-green-primary/5 blur-[100px] rounded-full pointer-events-none" />
 
@@ -49,20 +88,87 @@ export default function AuthPage() {
           </Link>
         </div>
 
-        <div className="bg-[var(--color-card)] border border-[var(--color-border)] p-8 rounded-2xl shadow-xl">
-          {!isSent ? (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h1 className="font-syne text-2xl text-[var(--color-foreground)] font-bold mb-2">
-                Welcome back
-              </h1>
-              <p className="text-[var(--color-text-dim)] text-sm mb-8">
-                Sign in to your account to continue.
-              </p>
+        <div className="bg-[var(--color-card)] border border-[var(--color-border)] p-8 rounded-2xl shadow-xl relative">
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-2xl z-50">
+              <div className="flex flex-col items-center justify-center">
+                <div className="w-12 h-12 border-4 border-green-primary border-t-transparent rounded-full animate-spin"></div>
+                <p className="mt-4 text-white font-medium">Signing in...</p>
+              </div>
+            </div>
+          )}
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h1 className="font-syne text-2xl text-[var(--color-foreground)] font-bold mb-2">
+              Welcome back
+            </h1>
+            <p className="text-[var(--color-text-dim)] text-sm mb-8">
+              Sign in to your account to continue.
+            </p>
 
-              {/* Google Sign In Button */}
+            <form onSubmit={handleEmailLogin} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@company.com"
+                  className="w-full bg-white border border-[var(--color-border)] 
+             rounded-xl px-4 py-3 outline-none 
+             text-black placeholder:text-gray-400
+             focus:ring-2 focus:ring-green-primary/20 
+             focus:border-green-primary transition-all"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full bg-white border border-[var(--color-border)] 
+             rounded-xl px-4 py-3 outline-none 
+             text-black placeholder:text-gray-400
+             focus:ring-2 focus:ring-green-primary/20 
+             focus:border-green-primary transition-all"
+                />
+              </div>
+
+              {error && (
+                <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+                  {error}
+                </div>
+              )}
+
               <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-green-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-50"
+              >
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[var(--color-border)]"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-[var(--color-card)] px-2 text-[var(--color-text-dim)]">
+                    Or continue with Google
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
                 onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-xl transition-all shadow-sm mb-4"
+                className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-xl transition-all shadow-sm"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
                   <path
@@ -84,80 +190,23 @@ export default function AuthPage() {
                 </svg>
                 Continue with Google
               </button>
-
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[var(--color-border)]"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-[var(--color-card)] px-2 text-[var(--color-text-dim)]">
-                    Or continue with email
-                  </span>
-                </div>
-              </div>
-
-              <form onSubmit={handleEmailLogin} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-text-dim)]">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@company.com"
-                    className="w-full bg-[var(--color-background)] border border-[var(--color-border)] 
-             rounded-xl px-4 py-3 outline-none 
-             text-[var(--color-foreground)] placeholder:text-[var(--color-text-dim)]
-             focus:ring-2 focus:ring-green-primary/20 
-             focus:border-green-primary transition-all"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-green-primary hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-green-500/20 disabled:opacity-50"
-                >
-                  {loading ? 'Sending...' : 'Send Link'}
-                </button>
-              </form>
-              <p className="mt-4 text-center text-sm text-[var(--color-text-dim)]">
-                <span>Don't have an account? </span>
-                <Link href="/auth/signup" className="font-bold text-green-primary hover:underline">
-                  Sign up
-                </Link>
-              </p>
-            </div>
-          ) : (
-            <div className="text-center py-4 animate-in zoom-in duration-300">
-              <div className="w-16 h-16 bg-green-500/10 text-green-primary rounded-full flex items-center justify-center mx-auto mb-6 text-2xl">
-                📬
-              </div>
-              <h2 className="font-syne text-2xl font-bold mb-2">
-                Check your inbox
-              </h2>
-              <p className="text-[var(--color-text-dim)] text-sm mb-8">
-                We sent a login link to <br />
-                <span className="text-[var(--color-foreground)] font-medium">
-                  {email}
-                </span>
-              </p>
-              <button
-                onClick={() => setIsSent(false)}
-                className="text-xs font-bold uppercase tracking-widest text-green-primary hover:underline"
+            </form>
+            <p className="mt-4 text-center text-sm text-[var(--color-text-dim)]">
+              <span>Don't have an account? </span>
+              <Link
+                href="/auth/signup"
+                className="font-bold text-green-primary hover:underline"
               >
-                Try a different email
-              </button>
-            </div>
-          )}
+                Sign up
+              </Link>
+            </p>
+          </div>
         </div>
 
         <p className="text-center mt-8 text-[10px] text-[var(--color-text-dim)] uppercase tracking-widest">
-          No password required • Secure Connection
+          Secure Connection
         </p>
       </div>
     </div>
-  );
+  )
 }
