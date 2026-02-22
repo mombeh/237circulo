@@ -116,9 +116,9 @@ export default function AuthPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="w-full bg-white border border-[var(--color-border)] 
+                    className="w-full bg-white border border-[var(--color-border)] 
              rounded-xl px-4 py-3 outline-none 
-             text-black placeholder:text-gray-400
+             text-[var(--color-foreground)] placeholder:text-[var(--color-text-dim)]
              focus:ring-2 focus:ring-green-primary/20 
              focus:border-green-primary transition-all"
                 />
@@ -136,7 +136,7 @@ export default function AuthPage() {
                   placeholder="••••••••"
                   className="w-full bg-white border border-[var(--color-border)] 
              rounded-xl px-4 py-3 outline-none 
-             text-black placeholder:text-gray-400
+             text-[var(--color-foreground)] placeholder:text-[var(--color-text-dim)]
              focus:ring-2 focus:ring-green-primary/20 
              focus:border-green-primary transition-all"
                 />
